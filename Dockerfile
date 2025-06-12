@@ -18,7 +18,7 @@
 # Use the offical golang image to create a binary.
 # This is based on Debian and sets the GOPATH to /go.
 # https://hub.docker.com/_/golang
-FROM golang:1.23.2-bookworm as builder
+FROM golang:1.23.2-bookworm AS builder
 
 # Create and change to the app directory.
 WORKDIR /app
@@ -45,6 +45,11 @@ RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -
 
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/server /app/server
+
+COPY .env .env
+
+# Expose port 8000
+EXPOSE 8000
 
 # Run the web service on container startup.
 CMD ["/app/server"]
