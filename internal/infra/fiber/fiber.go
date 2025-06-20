@@ -1,7 +1,7 @@
 package fiber
 
 import (
-	"sea-catering/internal/domain/env"
+	conf "sea-catering/config"
 	"time"
 
 	gojson "github.com/goccy/go-json"
@@ -14,7 +14,7 @@ import (
 	"github.com/wI2L/jettison"
 )
 
-func New(env *env.Env) *fiber.App {
+func New(conf *conf.Config) *fiber.App {
 	app := fiber.New(fiber.Config{
 		IdleTimeout: 5 * time.Second,
 		JSONEncoder: jettison.Marshal,

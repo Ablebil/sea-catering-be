@@ -3,7 +3,7 @@ package postgresql
 import (
 	"errors"
 	"log"
-	"sea-catering/internal/domain/env"
+	conf "sea-catering/config"
 
 	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/driver/postgres"
@@ -22,9 +22,9 @@ const (
 	ErrSerializationFailure PgErrorCode = "40001"
 )
 
-func New(dsn string, env *env.Env) (*gorm.DB, error) {
+func New(dsn string, conf *conf.Config) (*gorm.DB, error) {
 	var LogLevel logger.LogLevel
-	if env.AppEnv == "production" {
+	if conf.AppEnv == "production" {
 		LogLevel = logger.Warn
 	} else {
 		LogLevel = logger.Info

@@ -1,11 +1,11 @@
-package env
+package config
 
 import (
 	"github.com/caarlos0/env"
 	"github.com/joho/godotenv"
 )
 
-type Env struct {
+type Config struct {
 	AppEnv  string `env:"APP_ENV"`
 	AppHost string `env:"APP_HOST"`
 	AppPort string `env:"APP_PORT"`
@@ -18,15 +18,15 @@ type Env struct {
 	DBPassword string `env:"DB_PASSWORD"`
 }
 
-func New() (*Env, error) {
+func New() (*Config, error) {
 	if err := godotenv.Load(); err != nil {
 		panic(err)
 	}
 
-	_env := new(Env)
-	if err := env.Parse(_env); err != nil {
+	cfg := new(Config)
+	if err := env.Parse(cfg); err != nil {
 		return nil, err
 	}
 
-	return _env, nil
+	return cfg, nil
 }

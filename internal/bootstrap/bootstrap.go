@@ -2,13 +2,13 @@ package bootstrap
 
 import (
 	"fmt"
-	"sea-catering/internal/domain/env"
+	conf "sea-catering/config"
 	"sea-catering/internal/infra/fiber"
 	"sea-catering/internal/infra/postgresql"
 )
 
 func Start() error {
-	config, err := env.New()
+	config, err := conf.New()
 	if err != nil {
 		panic(err)
 	}
