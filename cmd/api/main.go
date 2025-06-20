@@ -1,6 +1,6 @@
 package main
 
-import "sea-catering/internal/bootstrap"
+import "github.com/Ablebil/sea-catering-be/internal/bootstrap"
 
 func main() {
 	if err := bootstrap.Start(); err != nil {

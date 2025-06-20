@@ -1,4 +1,4 @@
-module sea-catering
+module github.com/Ablebil/sea-catering-be
 
 go 1.23.2
 

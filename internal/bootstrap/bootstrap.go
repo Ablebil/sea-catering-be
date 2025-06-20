@@ -2,9 +2,10 @@ package bootstrap
 
 import (
 	"fmt"
-	conf "sea-catering/config"
-	"sea-catering/internal/infra/fiber"
-	"sea-catering/internal/infra/postgresql"
+
+	conf "github.com/Ablebil/sea-catering-be/config"
+	"github.com/Ablebil/sea-catering-be/internal/infra/fiber"
+	"github.com/Ablebil/sea-catering-be/internal/infra/postgresql"
 )
 
 func Start() error {

@@ -1,9 +1,9 @@
 package fiber
 
 import (
-	conf "sea-catering/config"
 	"time"
 
+	conf "github.com/Ablebil/sea-catering-be/config"
 	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"

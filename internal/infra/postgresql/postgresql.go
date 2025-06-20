@@ -3,8 +3,8 @@ package postgresql
 import (
 	"errors"
 	"log"
-	conf "sea-catering/config"
 
+	conf "github.com/Ablebil/sea-catering-be/config"
 	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
