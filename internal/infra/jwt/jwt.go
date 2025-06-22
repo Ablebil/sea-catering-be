@@ -74,7 +74,7 @@ func (j *JWT) GenerateRefershToken(userId uuid.UUID, rememberMe bool) (string, e
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(j.accessSecret))
+	return token.SignedString([]byte(j.refreshSecret))
 }
 
 func (j *JWT) VerifyAccessToken(tokenString string) (uuid.UUID, string, string, error) {
