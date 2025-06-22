@@ -9,7 +9,7 @@ type Config struct {
 	AppEnv  string `env:"APP_ENV"`
 	AppHost string `env:"APP_HOST"`
 	AppPort int    `env:"APP_PORT"`
-	AppUrl  string `env:"APP_URLT"`
+	AppUrl  string `env:"APP_URL"`
 
 	DBHost     string `env:"DB_HOST"`
 	DBPort     int    `env:"DB_PORT"`
