@@ -8,7 +8,7 @@ import (
 type Config struct {
 	AppEnv  string `env:"APP_ENV"`
 	AppHost string `env:"APP_HOST"`
-	AppPort string `env:"APP_PORT"`
+	AppPort int    `env:"APP_PORT"`
 	AppUrl  string `env:"APP_URLT"`
 
 	DBHost     string `env:"DB_HOST"`
@@ -16,6 +16,16 @@ type Config struct {
 	DBName     string `env:"DB_NAME"`
 	DBUser     string `env:"DB_USER"`
 	DBPassword string `env:"DB_PASSWORD"`
+
+	AccessSecret  string `env:"ACCESS_SECRET"`
+	RefreshSecret string `env:"REFRESH_SECRET"`
+
+	EmailUser     string `env:"EMAIL_USER"`
+	EmailPassword string `env:"EMAIL_PASSWORD"`
+
+	RedisHost     string `env:"REDIS_HOST"`
+	RedisPort     int    `env:"REDIS_PORT"`
+	RedisPassword string `env:"REDIS_PASSWORD"`
 }
 
 func New() (*Config, error) {

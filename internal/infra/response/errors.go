@@ -1,7 +1,6 @@
 package response
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -40,34 +39,35 @@ func ErrForbidden(message ...string) *Err {
 	return newError(fiber.StatusForbidden, "Forbidden", message...)
 }
 
-var validationMessages = map[string]string{
-	"required": "This field is required.",
-	"email":    "Invalid email format.",
-	"min":      "This field must be at least %d characters long.",
-	"max":      "This field must be at most %d characters long.",
-	"uuid":     "Invalid UUID format.",
-	"numeric":  "This field must be a number.",
+func ErrConflict(message ...string) *Err {
+	return newError(fiber.StatusConflict, "Conflict", message...)
 }
 
-func getValidationMessage(tag string, params ...interface{}) string {
-	if msg, exists := validationMessages[tag]; exists {
-		if len(params) > 0 {
-			return fmt.Sprintf(msg, params...)
-		}
-		return msg
-	}
-	return "Invalid input"
+var validationMessages = map[string]string{
+	"required": "The {field} field is required.",
+	"email":    "The {field} field must be a valid email format.",
+	"min":      "The {field} field must be at least {param} characters long.",
+	"max":      "The {field} field must be at most {param} characters long.",
+	"uuid":     "The {field} field must be a valid UUID format.",
+	"numeric":  "The {field} field must be a number.",
 }
 
 func ErrValidation(errs validator.ValidationErrors) *Err {
 	errorsMap := make(map[string]string)
+
 	for _, err := range errs {
 		field := strings.ToLower(err.Field())
 		tag := err.Tag()
 		param := err.Param()
 
-		msgTemplates := getValidationMessage(tag)
-		msg := strings.Replace(msgTemplates, "{field}", field, -1)
+		msg, exists := validationMessages[tag]
+		if !exists {
+			errorsMap[field] = err.Error()
+			continue
+		}
+
+		msg = strings.Replace(msg, "{field}", field, -1)
+
 		msg = strings.Replace(msg, "{param}", param, -1)
 
 		errorsMap[field] = msg

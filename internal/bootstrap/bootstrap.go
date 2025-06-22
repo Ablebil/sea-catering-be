@@ -4,8 +4,16 @@ import (
 	"fmt"
 
 	conf "github.com/Ablebil/sea-catering-be/config"
+	"github.com/Ablebil/sea-catering-be/internal/infra/email"
 	"github.com/Ablebil/sea-catering-be/internal/infra/fiber"
+	"github.com/Ablebil/sea-catering-be/internal/infra/jwt"
 	"github.com/Ablebil/sea-catering-be/internal/infra/postgresql"
+	"github.com/Ablebil/sea-catering-be/internal/infra/redis"
+	"github.com/go-playground/validator/v10"
+
+	AuthHandler "github.com/Ablebil/sea-catering-be/internal/app/auth/interface/rest"
+	AuthUsecase "github.com/Ablebil/sea-catering-be/internal/app/auth/usecase"
+	UserRepository "github.com/Ablebil/sea-catering-be/internal/app/user/repository"
 )
 
 func Start() error {
@@ -22,8 +30,26 @@ func Start() error {
 		config.DBPort,
 	), config)
 
+	if err != nil {
+		panic(fmt.Sprintf("Failed to connect to database: %v", err))
+	}
+
+	if err := postgresql.Migrate(db); err != nil {
+		return err
+	}
+
+	validator := validator.New()
+	jwt := jwt.NewJWT(config)
+	email := email.NewEmail(config)
+	redis := redis.NewRedis(config)
+
 	app := fiber.New(config)
 	v1 := app.Group("/api/v1")
+
+	// Auth Domain
+	userRepository := UserRepository.NewUserRepository(db)
+	authUsecase := AuthUsecase.NewAuthUsecase(userRepository, db, config, jwt, email, redis)
+	AuthHandler.NewAuthHandler(v1, validator, authUsecase)
 
 	return app.Listen(fmt.Sprintf("%s:%d", config.AppHost, config.AppPort))
 }

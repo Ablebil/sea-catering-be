@@ -13,7 +13,7 @@ type User struct {
 	Password     *string        `gorm:"column:password;type:varchar(255)"`
 	Name         string         `gorm:"column:name;type:varchar(255);not null"`
 	Verified     bool           `gorm:"column:verified;type:bool;default:false"`
-	Role         string         `gorm:"column:role;type:enum('user','admin');default:'user';not null"`
+	Role         string         `gorm:"column:role;type:varchar(255);default:'user';not null"`
 	RefreshToken []RefreshToken `gorm:"foreignKey:user_id;constraint:OnUpdate:SET NULL,OnDelete:SET NULL;"`
 	CreatedAt    *time.Time     `gorm:"column:created_at;type:timestamp;autoCreateTime"`
 	UpdatedAt    *time.Time     `gorm:"column:updated_at;type:timestamp;autoUpdateTime"`
