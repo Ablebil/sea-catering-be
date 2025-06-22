@@ -17,7 +17,7 @@ services:
       POSTGRES_DB: ${DB_NAME}
       PGDATA: /data/postgres
     healthcheck:
-      test: ["CMD_SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 1s
       timeout: 5s
       retries: 10
@@ -30,7 +30,7 @@ services:
       REDIS_USERNAME: ${REDIS_USERNAME}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
     healthcheck:
-      test: ["CMD_SHELL", "redis-cli", "-a", "${REDIS_PASSWORD}", "--raw", "incr", "ping"]
+      test: ["CMD-SHELL", "redis-cli", "-a", "${REDIS_PASSWORD}", "--raw", "incr", "ping"]
       interval: 1s
       timeout: 5s
       retries: 10
