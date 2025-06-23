@@ -23,6 +23,7 @@ func NewAuthHandler(routerGroup fiber.Router, validator *validator.Validate, aut
 	routerGroup.Post("/register", authHandler.Register)
 	routerGroup.Post("/verify-otp", authHandler.VerifyOTP)
 	routerGroup.Post("/login", authHandler.Login)
+	routerGroup.Post("/refresh-token", authHandler.RefreshToken)
 }
 
 // @Summary      Register User
@@ -134,4 +135,32 @@ func (h AuthHandler) Login(ctx *fiber.Ctx) error {
 	}
 
 	return res.OK(ctx, payload, res.LoginSuccess)
+}
+
+func (h AuthHandler) RefreshToken(ctx *fiber.Ctx) error {
+	req := new(dto.RefreshTokenRequest)
+	if err := ctx.BodyParser(req); err != nil {
+		return res.ErrBadRequest(res.FailedParsingRequestBody)
+	}
+
+	if err := h.Validator.Struct(req); err != nil {
+		validationErrors, ok := err.(validator.ValidationErrors)
+		if !ok {
+			return res.ErrInternalServerError(res.FailedValidateRequest)
+		}
+
+		return res.ErrValidation(validationErrors)
+	}
+
+	accessToken, refreshToken, err := h.AuthUsecase.RefreshToken(*req)
+	if err != nil {
+		return err
+	}
+
+	payload := dto.TokenResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
+
+	return res.OK(ctx, payload, res.RefreshTokenSuccess)
 }

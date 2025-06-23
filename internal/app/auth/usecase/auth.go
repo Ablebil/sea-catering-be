@@ -22,6 +22,7 @@ type AuthUsecaseItf interface {
 	Register(req dto.RegisterRequest) *res.Err
 	VerifyOTP(req dto.VerifyOTPRequest) (string, string, *res.Err)
 	Login(req dto.LoginRequest) (string, string, *res.Err)
+	RefreshToken(req dto.RefreshTokenRequest) (string, string, *res.Err)
 }
 
 type AuthUsecase struct {
@@ -174,6 +175,41 @@ func (uc *AuthUsecase) Login(req dto.LoginRequest) (string, string, *res.Err) {
 	accessToken, err := uc.jwt.GenerateAccessToken(user.ID, user.Name, user.Email)
 	if err != nil {
 		return "", "", res.ErrInternalServerError(res.FailedGenerateAccessToken)
+	}
+
+	return accessToken, refreshToken, nil
+}
+
+func (uc *AuthUsecase) RefreshToken(req dto.RefreshTokenRequest) (string, string, *res.Err) {
+	user, err := uc.userRepository.GetUserByRefreshToken(req.RefreshToken)
+	if err != nil {
+		return "", "", res.ErrInternalServerError(res.FailedFindUser)
+	}
+
+	if user == nil {
+		return "", "", res.ErrUnauthorized(res.InvalidRefreshToken)
+	}
+
+	if _, err := uc.jwt.VerifyRefreshToken(req.RefreshToken); err != nil {
+		return "", "", res.ErrUnauthorized(res.InvalidRefreshToken)
+	}
+
+	accessToken, err := uc.jwt.GenerateAccessToken(user.ID, user.Name, user.Email)
+	if err != nil {
+		return "", "", res.ErrInternalServerError(res.FailedGenerateAccessToken)
+	}
+
+	refreshToken, err := uc.jwt.GenerateRefershToken(user.ID, false)
+	if err != nil {
+		return "", "", res.ErrInternalServerError(res.FailedGenerateRefreshToken)
+	}
+
+	if err := uc.userRepository.RemoveRefreshToken(req.RefreshToken); err != nil {
+		return "", "", res.ErrInternalServerError(res.FailedRemoveRefreshToken)
+	}
+
+	if err := uc.userRepository.AddRefreshToken(user.ID, refreshToken); err != nil {
+		return "", "", res.ErrInternalServerError(res.FailedAddRefreshToken)
 	}
 
 	return accessToken, refreshToken, nil

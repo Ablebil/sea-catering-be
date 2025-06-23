@@ -17,6 +17,10 @@ type LoginRequest struct {
 	RememberMe bool   `json:"remember_me" example:"true"`
 }
 
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token" validate:"required" example:"eyJhbGciOiJI..."`
+}
+
 type TokenResponse struct {
 	AccessToken  string `json:"access_token" example:"eyJhbGciOiJI..."`
 	RefreshToken string `json:"refresh_token" example:"eyJhbGciOiJI..."`
