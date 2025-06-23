@@ -41,7 +41,7 @@ func (r *UserRepository) GetUserByEmail(email string) (*entity.User, error) {
 }
 
 func (r *UserRepository) CreateUser(user *entity.User) error {
-	return r.db.Create(&user).Error
+	return r.db.Create(user).Error
 }
 
 func (r *UserRepository) UpdateUser(email string, user *entity.User) error {
