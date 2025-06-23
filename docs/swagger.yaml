@@ -1,0 +1,182 @@
+basePath: /api/v1
+definitions:
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.LoginRequest:
+    properties:
+      email:
+        example: john@example.com
+        type: string
+      password:
+        example: Str0ngP@ssword
+        minLength: 8
+        type: string
+      remember_me:
+        example: true
+        type: boolean
+    required:
+    - email
+    - password
+    type: object
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.RegisterRequest:
+    properties:
+      email:
+        example: john@example.com
+        type: string
+      name:
+        example: John Doe
+        type: string
+      password:
+        example: Str0ngP@ssword
+        minLength: 8
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.VerifyOTPRequest:
+    properties:
+      email:
+        example: john@example.com
+        type: string
+      otp:
+        example: "123456"
+        type: string
+    required:
+    - email
+    - otp
+    type: object
+  github_com_Ablebil_sea-catering-be_internal_infra_response.Err:
+    properties:
+      message:
+        type: string
+      payload: {}
+    type: object
+  github_com_Ablebil_sea-catering-be_internal_infra_response.Res:
+    properties:
+      message:
+        type: string
+      payload: {}
+      status_code:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is the API documentation for the Sea Catering application.
+  title: Sea Catering API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user with email and password.
+      parameters:
+      - description: Login Request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful login, returns access and refresh tokens
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request (validation error)
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "401":
+          description: Unauthorized (invalid credentials or user not verified)
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      summary: Login User
+      tags:
+      - Authentication
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account and send an OTP for verification.
+      parameters:
+      - description: Register Request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Registration successful. Please check your email to verify
+            your account.
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+        "400":
+          description: Bad Request (e.g., validation error, malformed JSON)
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "409":
+          description: Conflict (e.g., email already exists)
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      summary: Register User
+      tags:
+      - Authentication
+  /auth/verify-otp:
+    post:
+      consumes:
+      - application/json
+      description: Verify the OTP sent to the user's email.
+      parameters:
+      - description: Verify OTP Request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.VerifyOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful verification, returns access and refresh tokens
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request (e.g., invalid OTP, validation error)
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "404":
+          description: User Not Found
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      summary: Verify OTP
+      tags:
+      - Authentication
+securityDefinitions:
+  ApiKeyAuth:
+    description: Enter your bearer token in the format `Bearer {token}`
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

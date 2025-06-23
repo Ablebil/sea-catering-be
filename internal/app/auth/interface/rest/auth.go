@@ -25,6 +25,17 @@ func NewAuthHandler(routerGroup fiber.Router, validator *validator.Validate, aut
 	routerGroup.Post("/login", authHandler.Login)
 }
 
+// @Summary      Register User
+// @Description  Create a new user account and send an OTP for verification.
+// @Tags         Authentication
+// @Accept       json
+// @Produce      json
+// @Param        payload body dto.RegisterRequest true "Register Request"
+// @Success      201  {object}  res.Res "Registration successful. OTP has been sent to email"
+// @Failure      400  {object}  res.Err "Bad Request (e.g., validation error, malformed JSON)"
+// @Failure      409  {object}  res.Err "Conflict (e.g., email already exists)"
+// @Failure      500  {object}  res.Err "Internal Server Error"
+// @Router       /auth/register [post]
 func (h AuthHandler) Register(ctx *fiber.Ctx) error {
 	req := new(dto.RegisterRequest)
 	if err := ctx.BodyParser(req); err != nil {
@@ -47,6 +58,17 @@ func (h AuthHandler) Register(ctx *fiber.Ctx) error {
 	return res.Created(ctx, nil, res.RegisterSuccess)
 }
 
+// @Summary      Verify OTP
+// @Description  Verify the OTP sent to the user's email.
+// @Tags         Authentication
+// @Accept       json
+// @Produce      json
+// @Param        payload body dto.VerifyOTPRequest true "Verify OTP Request"
+// @Success      200  {object}  map[string]string "Verification successful"
+// @Failure      400  {object}  res.Err "Bad Request (e.g., invalid OTP, validation error)"
+// @Failure      404  {object}  res.Err "User Not Found"
+// @Failure      500  {object}  res.Err "Internal Server Error"
+// @Router       /auth/verify-otp [post]
 func (h AuthHandler) VerifyOTP(ctx *fiber.Ctx) error {
 	req := new(dto.VerifyOTPRequest)
 	if err := ctx.BodyParser(req); err != nil {
@@ -73,6 +95,17 @@ func (h AuthHandler) VerifyOTP(ctx *fiber.Ctx) error {
 	}, res.VerifyOTPSuccess)
 }
 
+// @Summary      Login User
+// @Description  Authenticate a user with email and password.
+// @Tags         Authentication
+// @Accept       json
+// @Produce      json
+// @Param        payload body dto.LoginRequest true "Login Request"
+// @Success      200  {object}  map[string]string "Login successful"
+// @Failure      400  {object}  res.Err "Bad Request (validation error)"
+// @Failure      401  {object}  res.Err "Unauthorized (invalid credentials or user not verified)"
+// @Failure      500  {object}  res.Err "Internal Server Error"
+// @Router       /auth/login [post]
 func (h AuthHandler) Login(ctx *fiber.Ctx) error {
 	req := new(dto.LoginRequest)
 	if err := ctx.BodyParser(req); err != nil {

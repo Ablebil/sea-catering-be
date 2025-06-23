@@ -10,6 +10,7 @@ import (
 	"github.com/Ablebil/sea-catering-be/internal/infra/postgresql"
 	"github.com/Ablebil/sea-catering-be/internal/infra/redis"
 	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/swagger"
 
 	AuthHandler "github.com/Ablebil/sea-catering-be/internal/app/auth/interface/rest"
 	AuthUsecase "github.com/Ablebil/sea-catering-be/internal/app/auth/usecase"
@@ -50,6 +51,9 @@ func Start() error {
 	userRepository := UserRepository.NewUserRepository(db)
 	authUsecase := AuthUsecase.NewAuthUsecase(userRepository, db, config, jwt, email, redis)
 	AuthHandler.NewAuthHandler(v1, validator, authUsecase)
+
+	// Swagger Documentation
+	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	return app.Listen(fmt.Sprintf("%s:%d", config.AppHost, config.AppPort))
 }
