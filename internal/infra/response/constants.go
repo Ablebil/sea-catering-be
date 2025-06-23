@@ -20,6 +20,7 @@ const (
 	VerifyOTPSuccess    = "Verification successful"
 	LoginSuccess        = "Login successful"
 	RefreshTokenSuccess = "Token refresh successful"
+	LogoutSuccess       = "Logout successful"
 )
 
 // Others

@@ -23,6 +23,7 @@ type AuthUsecaseItf interface {
 	VerifyOTP(req dto.VerifyOTPRequest) (string, string, *res.Err)
 	Login(req dto.LoginRequest) (string, string, *res.Err)
 	RefreshToken(req dto.RefreshTokenRequest) (string, string, *res.Err)
+	Logout(req dto.LogoutRequest) *res.Err
 }
 
 type AuthUsecase struct {
@@ -213,4 +214,21 @@ func (uc *AuthUsecase) RefreshToken(req dto.RefreshTokenRequest) (string, string
 	}
 
 	return accessToken, refreshToken, nil
+}
+
+func (uc *AuthUsecase) Logout(req dto.LogoutRequest) *res.Err {
+	user, err := uc.userRepository.GetUserByRefreshToken(req.RefreshToken)
+	if err != nil {
+		return res.ErrInternalServerError(res.FailedFindUser)
+	}
+
+	if user == nil {
+		return res.ErrUnauthorized(res.InvalidRefreshToken)
+	}
+
+	if err := uc.userRepository.RemoveRefreshToken(req.RefreshToken); err != nil {
+		return res.ErrInternalServerError(res.FailedRemoveRefreshToken)
+	}
+
+	return nil
 }

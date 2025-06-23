@@ -164,3 +164,25 @@ func (h AuthHandler) RefreshToken(ctx *fiber.Ctx) error {
 
 	return res.OK(ctx, payload, res.RefreshTokenSuccess)
 }
+
+func (h AuthHandler) Logout(ctx *fiber.Ctx) error {
+	req := new(dto.LogoutRequest)
+	if err := ctx.BodyParser(req); err != nil {
+		return res.ErrBadRequest(res.FailedParsingRequestBody)
+	}
+
+	if err := h.Validator.Struct(req); err != nil {
+		validationErrors, ok := err.(validator.ValidationErrors)
+		if !ok {
+			return res.ErrInternalServerError(res.FailedValidateRequest)
+		}
+
+		return res.ErrValidation(validationErrors)
+	}
+
+	if err := h.AuthUsecase.Logout(*req); err != nil {
+		return err
+	}
+
+	return res.OK(ctx, nil, res.LogoutSuccess)
+}
