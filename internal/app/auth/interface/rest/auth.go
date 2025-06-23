@@ -31,8 +31,8 @@ func NewAuthHandler(routerGroup fiber.Router, validator *validator.Validate, aut
 // @Accept       json
 // @Produce      json
 // @Param        payload body dto.RegisterRequest true "Register Request"
-// @Success      201  {object}  res.Res "Registration successful. OTP has been sent to email"
-// @Failure      400  {object}  res.Err "Bad Request (e.g., validation error, malformed JSON)"
+// @Success      201  {object}  res.Res "Registration successful. OTP has been sent to email."
+// @Failure      400  {object}  res.Err "Bad Request (e.g., validation error)"
 // @Failure      409  {object}  res.Err "Conflict (e.g., email already exists)"
 // @Failure      500  {object}  res.Err "Internal Server Error"
 // @Router       /auth/register [post]
@@ -59,12 +59,12 @@ func (h AuthHandler) Register(ctx *fiber.Ctx) error {
 }
 
 // @Summary      Verify OTP
-// @Description  Verify the OTP sent to the user's email.
+// @Description  Verify the OTP sent to the user's email and get access/refresh tokens.
 // @Tags         Authentication
 // @Accept       json
 // @Produce      json
 // @Param        payload body dto.VerifyOTPRequest true "Verify OTP Request"
-// @Success      200  {object}  map[string]string "Verification successful"
+// @Success      200  {object}  res.Res{payload=dto.TokenResponse} "Verification successful, tokens returned."
 // @Failure      400  {object}  res.Err "Bad Request (e.g., invalid OTP, validation error)"
 // @Failure      404  {object}  res.Err "User Not Found"
 // @Failure      500  {object}  res.Err "Internal Server Error"
@@ -89,19 +89,21 @@ func (h AuthHandler) VerifyOTP(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return res.OK(ctx, fiber.Map{
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
-	}, res.VerifyOTPSuccess)
+	payload := dto.TokenResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
+
+	return res.OK(ctx, payload, res.VerifyOTPSuccess)
 }
 
 // @Summary      Login User
-// @Description  Authenticate a user with email and password.
+// @Description  Authenticate a user with email and password and get access/refresh tokens.
 // @Tags         Authentication
 // @Accept       json
 // @Produce      json
 // @Param        payload body dto.LoginRequest true "Login Request"
-// @Success      200  {object}  map[string]string "Login successful"
+// @Success      200  {object}  res.Res{payload=dto.TokenResponse} "Login successful, tokens returned."
 // @Failure      400  {object}  res.Err "Bad Request (validation error)"
 // @Failure      401  {object}  res.Err "Unauthorized (invalid credentials or user not verified)"
 // @Failure      500  {object}  res.Err "Internal Server Error"
@@ -126,8 +128,10 @@ func (h AuthHandler) Login(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return res.OK(ctx, fiber.Map{
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
-	}, res.LoginSuccess)
+	payload := dto.TokenResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
+
+	return res.OK(ctx, payload, res.LoginSuccess)
 }

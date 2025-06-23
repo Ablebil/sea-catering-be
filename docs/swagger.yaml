@@ -33,6 +33,15 @@ definitions:
     - name
     - password
     type: object
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.TokenResponse:
+    properties:
+      access_token:
+        example: eyJhbGciOiJI...
+        type: string
+      refresh_token:
+        example: eyJhbGciOiJI...
+        type: string
+    type: object
   github_com_Ablebil_sea-catering-be_internal_domain_dto.VerifyOTPRequest:
     properties:
       email:
@@ -70,7 +79,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Authenticate a user with email and password.
+      description: Authenticate a user with email and password and get access/refresh
+        tokens.
       parameters:
       - description: Login Request
         in: body
@@ -82,11 +92,14 @@ paths:
       - application/json
       responses:
         "200":
-          description: Successful login, returns access and refresh tokens
+          description: Login successful, tokens returned.
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.TokenResponse'
+              type: object
         "400":
           description: Bad Request (validation error)
           schema:
@@ -118,12 +131,11 @@ paths:
       - application/json
       responses:
         "201":
-          description: Registration successful. Please check your email to verify
-            your account.
+          description: Registration successful. OTP has been sent to email.
           schema:
             $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
         "400":
-          description: Bad Request (e.g., validation error, malformed JSON)
+          description: Bad Request (e.g., validation error)
           schema:
             $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
         "409":
@@ -141,7 +153,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Verify the OTP sent to the user's email.
+      description: Verify the OTP sent to the user's email and get access/refresh
+        tokens.
       parameters:
       - description: Verify OTP Request
         in: body
@@ -153,11 +166,14 @@ paths:
       - application/json
       responses:
         "200":
-          description: Successful verification, returns access and refresh tokens
+          description: Verification successful, tokens returned.
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.TokenResponse'
+              type: object
         "400":
           description: Bad Request (e.g., invalid OTP, validation error)
           schema:

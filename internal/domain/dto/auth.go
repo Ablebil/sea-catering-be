@@ -16,3 +16,8 @@ type LoginRequest struct {
 	Password   string `json:"password" validate:"required,min=8" example:"Str0ngP@ssword"`
 	RememberMe bool   `json:"remember_me" example:"true"`
 }
+
+type TokenResponse struct {
+	AccessToken  string `json:"access_token" example:"eyJhbGciOiJI..."`
+	RefreshToken string `json:"refresh_token" example:"eyJhbGciOiJI..."`
+}

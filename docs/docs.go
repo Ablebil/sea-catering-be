@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/auth/login": {
             "post": {
-                "description": "Authenticate a user with email and password.",
+                "description": "Authenticate a user with email and password and get access/refresh tokens.",
                 "consumes": [
                     "application/json"
                 ],
@@ -41,12 +41,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful login, returns access and refresh tokens",
+                        "description": "Login successful, tokens returned.",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "payload": {
+                                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.TokenResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -96,13 +105,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "Registration successful. Please check your email to verify your account.",
+                        "description": "Registration successful. OTP has been sent to email.",
                         "schema": {
                             "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
                         }
                     },
                     "400": {
-                        "description": "Bad Request (e.g., validation error, malformed JSON)",
+                        "description": "Bad Request (e.g., validation error)",
                         "schema": {
                             "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
                         }
@@ -124,7 +133,7 @@ const docTemplate = `{
         },
         "/auth/verify-otp": {
             "post": {
-                "description": "Verify the OTP sent to the user's email.",
+                "description": "Verify the OTP sent to the user's email and get access/refresh tokens.",
                 "consumes": [
                     "application/json"
                 ],
@@ -148,12 +157,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful verification, returns access and refresh tokens",
+                        "description": "Verification successful, tokens returned.",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "payload": {
+                                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.TokenResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -221,6 +239,19 @@ const docTemplate = `{
                     "type": "string",
                     "minLength": 8,
                     "example": "Str0ngP@ssword"
+                }
+            }
+        },
+        "github_com_Ablebil_sea-catering-be_internal_domain_dto.TokenResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJI..."
+                },
+                "refresh_token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJI..."
                 }
             }
         },
