@@ -16,6 +16,22 @@ definitions:
     - email
     - password
     type: object
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.LogoutRequest:
+    properties:
+      refresh_token:
+        example: eyJhbGciOiJI...
+        type: string
+    required:
+    - refresh_token
+    type: object
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        example: eyJhbGciOiJI...
+        type: string
+    required:
+    - refresh_token
+    type: object
   github_com_Ablebil_sea-catering-be_internal_domain_dto.RegisterRequest:
     properties:
       email:
@@ -113,6 +129,79 @@ paths:
           schema:
             $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
       summary: Login User
+      tags:
+      - Authentication
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Invalidate the refresh token and logout the user.
+      parameters:
+      - description: Logout Request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.LogoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Logout successful
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+        "400":
+          description: Bad Request (validation error)
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "401":
+          description: Unauthorized (invalid or expired refresh token)
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      summary: Logout
+      tags:
+      - Authentication
+  /auth/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: Generate new access and refresh tokens using a valid refresh token.
+      parameters:
+      - description: Refresh Token Request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token refresh successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.TokenResponse'
+              type: object
+        "400":
+          description: Bad Request (validation error)
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "401":
+          description: Unauthorized (invalid or expired refresh token)
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      summary: Refresh Token
       tags:
       - Authentication
   /auth/register:

@@ -24,6 +24,7 @@ func NewAuthHandler(routerGroup fiber.Router, validator *validator.Validate, aut
 	routerGroup.Post("/verify-otp", authHandler.VerifyOTP)
 	routerGroup.Post("/login", authHandler.Login)
 	routerGroup.Post("/refresh-token", authHandler.RefreshToken)
+	routerGroup.Post("/logout", authHandler.Logout)
 }
 
 // @Summary      Register User
@@ -137,6 +138,17 @@ func (h AuthHandler) Login(ctx *fiber.Ctx) error {
 	return res.OK(ctx, payload, res.LoginSuccess)
 }
 
+// @Summary      Refresh Token
+// @Description  Generate new access and refresh tokens using a valid refresh token.
+// @Tags         Authentication
+// @Accept       json
+// @Produce      json
+// @Param        payload body dto.RefreshTokenRequest true "Refresh Token Request"
+// @Success      200  {object}  res.Res{payload=dto.TokenResponse} "Token refresh successful"
+// @Failure      400  {object}  res.Err "Bad Request (validation error)"
+// @Failure      401  {object}  res.Err "Unauthorized (invalid or expired refresh token)"
+// @Failure      500  {object}  res.Err "Internal Server Error"
+// @Router       /auth/refresh-token [post]
 func (h AuthHandler) RefreshToken(ctx *fiber.Ctx) error {
 	req := new(dto.RefreshTokenRequest)
 	if err := ctx.BodyParser(req); err != nil {
@@ -165,6 +177,17 @@ func (h AuthHandler) RefreshToken(ctx *fiber.Ctx) error {
 	return res.OK(ctx, payload, res.RefreshTokenSuccess)
 }
 
+// @Summary      Logout
+// @Description  Invalidate the refresh token and logout the user.
+// @Tags         Authentication
+// @Accept       json
+// @Produce      json
+// @Param        payload body dto.LogoutRequest true "Logout Request"
+// @Success      200  {object}  res.Res "Logout successful"
+// @Failure      400  {object}  res.Err "Bad Request (validation error)"
+// @Failure      401  {object}  res.Err "Unauthorized (invalid or expired refresh token)"
+// @Failure      500  {object}  res.Err "Internal Server Error"
+// @Router       /auth/logout [post]
 func (h AuthHandler) Logout(ctx *fiber.Ctx) error {
 	req := new(dto.LogoutRequest)
 	if err := ctx.BodyParser(req); err != nil {
