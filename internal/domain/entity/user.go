@@ -12,6 +12,7 @@ type User struct {
 	Email        string         `gorm:"column:email;type:varchar(255);unique;not null"`
 	Password     *string        `gorm:"column:password;type:varchar(255)"`
 	Name         string         `gorm:"column:name;type:varchar(255);not null"`
+	GoogleID     *string        `gorm:"column:google_id;type:varchar(255);unique"`
 	Verified     bool           `gorm:"column:verified;type:bool;default:false"`
 	Role         string         `gorm:"column:role;type:varchar(255);default:'user';not null"`
 	RefreshToken []RefreshToken `gorm:"foreignKey:user_id;constraint:OnUpdate:SET NULL,OnDelete:CASCADE;"`

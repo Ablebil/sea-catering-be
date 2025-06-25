@@ -7,6 +7,7 @@ import (
 	"github.com/Ablebil/sea-catering-be/internal/infra/email"
 	"github.com/Ablebil/sea-catering-be/internal/infra/fiber"
 	"github.com/Ablebil/sea-catering-be/internal/infra/jwt"
+	"github.com/Ablebil/sea-catering-be/internal/infra/oauth"
 	"github.com/Ablebil/sea-catering-be/internal/infra/postgresql"
 	"github.com/Ablebil/sea-catering-be/internal/infra/redis"
 	"github.com/go-playground/validator/v10"
@@ -43,14 +44,15 @@ func Start() error {
 	jwt := jwt.NewJWT(config)
 	email := email.NewEmail(config)
 	redis := redis.NewRedis(config)
+	oauth := oauth.NewOAuth(config)
 
 	app := fiber.New(config)
 	v1 := app.Group("/api/v1")
 
 	// Auth Domain
 	userRepository := UserRepository.NewUserRepository(db)
-	authUsecase := AuthUsecase.NewAuthUsecase(userRepository, db, config, jwt, email, redis)
-	AuthHandler.NewAuthHandler(v1, validator, authUsecase)
+	authUsecase := AuthUsecase.NewAuthUsecase(userRepository, db, config, jwt, email, redis, oauth)
+	AuthHandler.NewAuthHandler(v1, validator, authUsecase, config)
 
 	// Swagger Documentation
 	app.Get("/swagger/*", swagger.HandlerDefault)

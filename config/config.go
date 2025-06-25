@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/caarlos0/env"
 	"github.com/joho/godotenv"
 )
@@ -23,9 +25,19 @@ type Config struct {
 	EmailUser     string `env:"EMAIL_USER"`
 	EmailPassword string `env:"EMAIL_PASSWORD"`
 
+	OTPExpiry time.Duration `env:"OTP_EXPIRY"`
+
 	RedisHost     string `env:"REDIS_HOST"`
 	RedisPort     int    `env:"REDIS_PORT"`
 	RedisPassword string `env:"REDIS_PASSWORD"`
+
+	GoogleClientID     string `env:"GOOGLE_CLIENT_ID"`
+	GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET"`
+	GoogleRedirectURL  string `env:"GOOGLE_REDIRECT_URL"`
+	FERedirectURL      string `env:"FE_REDIRECT_URL"`
+
+	StateLength int           `env:"STATE_LENGTH"`
+	StateExpiry time.Duration `env:"STATE_EXPIRY"`
 }
 
 func New() (*Config, error) {

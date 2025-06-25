@@ -25,7 +25,21 @@ type LogoutRequest struct {
 	RefreshToken string `json:"refresh_token" validate:"required" example:"eyJhbGciOiJI..."`
 }
 
+type GoogleCallbackRequest struct {
+	Code  string `json:"code" validate:"required"`
+	State string `json:"state" validate:"required"`
+	Error string `json:"error"`
+}
+
 type TokenResponse struct {
 	AccessToken  string `json:"access_token" example:"eyJhbGciOiJI..."`
 	RefreshToken string `json:"refresh_token" example:"eyJhbGciOiJI..."`
+}
+
+type GoogleProfileResponse struct {
+	ID       string `json:"google_id" validate:"required"`
+	Email    string `json:"email" validate:"required, email"`
+	Username string `json:"username" validate:"required"`
+	Name     string `json:"name" validate:"required"`
+	Verified bool   `json:"verified" validate:"required"`
 }

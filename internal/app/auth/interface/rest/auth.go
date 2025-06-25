@@ -1,6 +1,10 @@
 package rest
 
 import (
+	"fmt"
+	"net/url"
+
+	conf "github.com/Ablebil/sea-catering-be/config"
 	"github.com/Ablebil/sea-catering-be/internal/app/auth/usecase"
 	"github.com/Ablebil/sea-catering-be/internal/domain/dto"
 	res "github.com/Ablebil/sea-catering-be/internal/infra/response"
@@ -11,18 +15,22 @@ import (
 type AuthHandler struct {
 	Validator   *validator.Validate
 	AuthUsecase usecase.AuthUsecaseItf
+	conf        *conf.Config
 }
 
-func NewAuthHandler(routerGroup fiber.Router, validator *validator.Validate, authUsecase usecase.AuthUsecaseItf) {
+func NewAuthHandler(routerGroup fiber.Router, validator *validator.Validate, authUsecase usecase.AuthUsecaseItf, conf *conf.Config) {
 	authHandler := AuthHandler{
 		Validator:   validator,
 		AuthUsecase: authUsecase,
+		conf:        conf,
 	}
 
 	routerGroup = routerGroup.Group("/auth")
 	routerGroup.Post("/register", authHandler.Register)
 	routerGroup.Post("/verify-otp", authHandler.VerifyOTP)
 	routerGroup.Post("/login", authHandler.Login)
+	routerGroup.Get("/google", authHandler.GoogleLogin)
+	routerGroup.Get("/google/callback", authHandler.GoogleCallback)
 	routerGroup.Post("/refresh-token", authHandler.RefreshToken)
 	routerGroup.Post("/logout", authHandler.Logout)
 }
@@ -136,6 +144,45 @@ func (h AuthHandler) Login(ctx *fiber.Ctx) error {
 	}
 
 	return res.OK(ctx, payload, res.LoginSuccess)
+}
+
+func (h AuthHandler) GoogleLogin(ctx *fiber.Ctx) error {
+	url, err := h.AuthUsecase.GoogleLogin()
+	if err != nil {
+		return res.ErrInternalServerError(res.FailedGoogleLogin)
+	}
+
+	return ctx.Redirect(url, fiber.StatusSeeOther)
+}
+
+func (h AuthHandler) GoogleCallback(ctx *fiber.Ctx) error {
+	req := &dto.GoogleCallbackRequest{
+		Code:  ctx.Query("code"),
+		State: ctx.Query("state"),
+		Error: ctx.Query("error"),
+	}
+
+	if err := h.Validator.Struct(req); err != nil {
+		validationErrors, ok := err.(validator.ValidationErrors)
+		if !ok {
+			return res.ErrInternalServerError(res.FailedValidateRequest)
+		}
+
+		return res.ErrValidation(validationErrors)
+	}
+
+	accessToken, refreshToken, isNewUser, err := h.AuthUsecase.GoogleCallback(req)
+	if err != nil {
+		return err
+	}
+
+	redirectUrl := fmt.Sprintf("%s?access_token=%s&refresh_token=%s&is_new_user=%t",
+		h.conf.FERedirectURL,
+		url.QueryEscape(accessToken),
+		url.QueryEscape(refreshToken),
+		isNewUser)
+
+	return ctx.Redirect(redirectUrl, fiber.StatusSeeOther)
 }
 
 // @Summary      Refresh Token
