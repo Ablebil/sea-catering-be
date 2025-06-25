@@ -91,6 +91,56 @@ info:
   title: Sea Catering API
   version: "1.0"
 paths:
+  /auth/google:
+    get:
+      description: Redirect user to Google OAuth login page.
+      produces:
+      - application/json
+      responses:
+        "303":
+          description: Redirect to Google OAuth
+          schema:
+            type: string
+      summary: Google OAuth Login
+      tags:
+      - Authentication
+  /auth/google/callback:
+    get:
+      description: Callback endpoint for Google OAuth. Handles code and state from
+        Google, then redirects to FE with tokens.
+      parameters:
+      - description: Authorization code from Google
+        in: query
+        name: code
+        required: true
+        type: string
+      - description: OAuth state
+        in: query
+        name: state
+        required: true
+        type: string
+      - description: OAuth error
+        in: query
+        name: error
+        type: string
+      produces:
+      - application/json
+      responses:
+        "303":
+          description: Redirect to FE with tokens
+          schema:
+            type: string
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      summary: Google OAuth Callback
+      tags:
+      - Authentication
   /auth/login:
     post:
       consumes:

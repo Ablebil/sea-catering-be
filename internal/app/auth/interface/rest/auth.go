@@ -146,6 +146,12 @@ func (h AuthHandler) Login(ctx *fiber.Ctx) error {
 	return res.OK(ctx, payload, res.LoginSuccess)
 }
 
+// @Summary      Google OAuth Login
+// @Description  Redirect user to Google OAuth login page.
+// @Tags         Authentication
+// @Produce      json
+// @Success      303  {string}  string  "Redirect to Google OAuth"
+// @Router       /auth/google [get]
 func (h AuthHandler) GoogleLogin(ctx *fiber.Ctx) error {
 	url, err := h.AuthUsecase.GoogleLogin()
 	if err != nil {
@@ -155,6 +161,17 @@ func (h AuthHandler) GoogleLogin(ctx *fiber.Ctx) error {
 	return ctx.Redirect(url, fiber.StatusSeeOther)
 }
 
+// @Summary      Google OAuth Callback
+// @Description  Callback endpoint for Google OAuth. Handles code and state from Google, then redirects to FE with tokens.
+// @Tags         Authentication
+// @Produce      json
+// @Param        code  query  string  true  "Authorization code from Google"
+// @Param        state query  string  true  "OAuth state"
+// @Param        error query  string  false "OAuth error"
+// @Success      303  {string}  string  "Redirect to FE with tokens"
+// @Failure      400  {object}  res.Err "Invalid request"
+// @Failure      500  {object}  res.Err "Internal Server Error"
+// @Router       /auth/google/callback [get]
 func (h AuthHandler) GoogleCallback(ctx *fiber.Ctx) error {
 	req := &dto.GoogleCallbackRequest{
 		Code:  ctx.Query("code"),
