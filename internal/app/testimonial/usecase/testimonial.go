@@ -36,7 +36,7 @@ func (uc *TestimonialUsecase) GetAllTestimonials() ([]dto.TestimonialResponse, *
 		return nil, res.ErrInternalServerError(res.FailedGetAllTestimonials)
 	}
 
-	var result []dto.TestimonialResponse
+	result := make([]dto.TestimonialResponse, 0, len(testimonials))
 	for _, t := range testimonials {
 		result = append(result, dto.TestimonialResponse{
 			ID:       t.ID,
