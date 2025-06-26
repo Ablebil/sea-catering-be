@@ -384,6 +384,124 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/testimonials/": {
+            "get": {
+                "description": "Get all testimonials.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Testimonial"
+                ],
+                "summary": "Get All Testimonials",
+                "responses": {
+                    "200": {
+                        "description": "Get all testimonials successful",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "payload": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.TestimonialResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new testimonial with photo upload. Only for authenticated users.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Testimonial"
+                ],
+                "summary": "Create Testimonial",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "John Doe",
+                        "description": "Customer Name",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "The food was delicious",
+                        "description": "Review Message",
+                        "name": "message",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "example": 5,
+                        "description": "Rating (1-5)",
+                        "name": "rating",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Photo of the meal",
+                        "name": "photo",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Create testimonial successful",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request (validation error)",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -453,6 +571,31 @@ const docTemplate = `{
                     "type": "string",
                     "minLength": 8,
                     "example": "Str0ngP@ssword"
+                }
+            }
+        },
+        "github_com_Ablebil_sea-catering-be_internal_domain_dto.TestimonialResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "b3e1f8e2..."
+                },
+                "message": {
+                    "type": "string",
+                    "example": "The food was delicious"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "photo_url": {
+                    "type": "string",
+                    "example": "https://..."
+                },
+                "rating": {
+                    "type": "integer",
+                    "example": 5
                 }
             }
         },

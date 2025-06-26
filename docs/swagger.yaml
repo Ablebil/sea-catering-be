@@ -49,6 +49,24 @@ definitions:
     - name
     - password
     type: object
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.TestimonialResponse:
+    properties:
+      id:
+        example: b3e1f8e2...
+        type: string
+      message:
+        example: The food was delicious
+        type: string
+      name:
+        example: John Doe
+        type: string
+      photo_url:
+        example: https://...
+        type: string
+      rating:
+        example: 5
+        type: integer
+    type: object
   github_com_Ablebil_sea-catering-be_internal_domain_dto.TokenResponse:
     properties:
       access_token:
@@ -328,6 +346,83 @@ paths:
       summary: Verify OTP
       tags:
       - Authentication
+  /testimonials/:
+    get:
+      description: Get all testimonials.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get all testimonials successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  items:
+                    $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.TestimonialResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      summary: Get All Testimonials
+      tags:
+      - Testimonial
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new testimonial with photo upload. Only for authenticated
+        users.
+      parameters:
+      - description: Customer Name
+        example: John Doe
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Review Message
+        example: The food was delicious
+        in: formData
+        name: message
+        required: true
+        type: string
+      - description: Rating (1-5)
+        example: 5
+        in: formData
+        name: rating
+        required: true
+        type: integer
+      - description: Photo of the meal
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Create testimonial successful
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+        "400":
+          description: Bad Request (validation error)
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Testimonial
+      tags:
+      - Testimonial
 securityDefinitions:
   ApiKeyAuth:
     description: Enter your bearer token in the format `Bearer {token}`
