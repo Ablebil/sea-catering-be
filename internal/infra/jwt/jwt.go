@@ -47,7 +47,7 @@ func (j *JWT) GenerateAccessToken(userId uuid.UUID, name string, email string) (
 		Name:   name,
 		Email:  email,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * 60)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
@@ -82,13 +82,13 @@ func (j *JWT) VerifyAccessToken(tokenString string) (uuid.UUID, string, string, 
 		return []byte(j.accessSecret), nil
 	})
 
-	if err != nil || !token.Valid {
-		return uuid.Nil, "", "", errors.New("Invalid access token")
+	if err != nil {
+		return uuid.Nil, "", "", err
 	}
 
 	claims, ok := token.Claims.(*AccessClaims)
-	if !ok {
-		return uuid.Nil, "", "", errors.New("Couldn't parse access token claims")
+	if !ok || !token.Valid {
+		return uuid.Nil, "", "", errors.New("couldn't parse access token claims")
 	}
 
 	return claims.UserID, claims.Name, claims.Email, nil
@@ -99,13 +99,13 @@ func (j *JWT) VerifyRefreshToken(tokenString string) (uuid.UUID, error) {
 		return []byte(j.refreshSecret), nil
 	})
 
-	if err != nil || !token.Valid {
-		return uuid.Nil, errors.New("Invalid refresh token")
+	if err != nil {
+		return uuid.Nil, err
 	}
 
 	claims, ok := token.Claims.(*RefreshClaims)
-	if !ok {
-		return uuid.Nil, errors.New("Couldn't parse refresh token claims")
+	if !ok || !token.Valid {
+		return uuid.Nil, errors.New("couldn't parse refresh token claims")
 	}
 
 	return claims.UserID, nil
