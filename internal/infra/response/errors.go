@@ -43,6 +43,14 @@ func ErrConflict(message ...string) *Err {
 	return newError(fiber.StatusConflict, "Conflict", message...)
 }
 
+func ErrEntityTooLarge(message ...string) *Err {
+	return newError(fiber.StatusRequestEntityTooLarge, "Entity Too Large", message...)
+}
+
+func ErrUnprocessableEntity(message ...string) *Err {
+	return newError(fiber.StatusUnprocessableEntity, "Unprocessable Entity", message...)
+}
+
 var validationMessages = map[string]string{
 	"required": "The {field} field is required.",
 	"email":    "The {field} field must be a valid email format.",

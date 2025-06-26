@@ -41,6 +41,8 @@ type Config struct {
 
 	SupabaseURL string `env:"SUPABASE_URL"`
 	SupabaseKey string `env:"SUPABASE_KEY"`
+
+	MaxFileSize int `env:"MAX_FILE_SIZE"`
 }
 
 func New() (*Config, error) {

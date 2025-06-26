@@ -12,6 +12,7 @@ import (
 	"github.com/Ablebil/sea-catering-be/internal/infra/redis"
 	"github.com/Ablebil/sea-catering-be/internal/infra/supabase"
 	"github.com/Ablebil/sea-catering-be/internal/middleware"
+	"github.com/Ablebil/sea-catering-be/internal/pkg/helper"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/swagger"
 
@@ -53,6 +54,7 @@ func Start() error {
 	oauth := oauth.NewOAuth(config)
 	supabase := supabase.NewSupabase(config)
 	middleware := middleware.NewMiddleware(jwt)
+	helper := helper.NewHelper()
 
 	app := fiber.New(config)
 	v1 := app.Group("/api/v1")
@@ -65,7 +67,7 @@ func Start() error {
 	// Testimonial Domain
 	testimonialRepository := TestimonialRepository.NewTestimonialRepository(db)
 	testimonialUsecase := TestimonialUsecase.NewTestimonialUsecase(testimonialRepository, supabase)
-	TestimonialHandler.NewTestimonialHandler(v1, validator, testimonialUsecase, middleware)
+	TestimonialHandler.NewTestimonialHandler(v1, validator, testimonialUsecase, middleware, helper, config)
 
 	// Swagger Documentation
 	app.Get("/swagger/*", swagger.HandlerDefault)

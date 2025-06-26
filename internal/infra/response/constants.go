@@ -39,19 +39,23 @@ const (
 
 // Others
 const (
-	FailedHashPassword         = "Failed to hash password"
-	FailedGenerateOTP          = "Failed to generate OTP"
-	FailedStoreOTP             = "Failed to store OTP"
-	FailedDeleteOTP            = "Failed to delete OTP"
-	FailedSendOTPEmail         = "Failed to send OTP email"
-	FailedGenerateRefreshToken = "Failed to generate refresh token"
-	FailedGenerateAccessToken  = "Failed to generate access token"
-	FailedGenerateOAuthState   = "Failed to generate OAuth state"
-	FailedStoreOAuthState      = "Failed to store OAuth state"
-	FailedDeleteOAuthState     = "Failed to delete OAuth state"
-	FailedGenerateOAuthLink    = "Failed to generate OAuth link"
-	FailedOAuthCallback        = "Failed to handle OAuth callback"
-	FailedUploadFile           = "Failed to upload file"
+	FailedHashPassword           = "Failed to hash password"
+	FailedGenerateOTP            = "Failed to generate OTP"
+	FailedStoreOTP               = "Failed to store OTP"
+	FailedDeleteOTP              = "Failed to delete OTP"
+	FailedSendOTPEmail           = "Failed to send OTP email"
+	FailedGenerateRefreshToken   = "Failed to generate refresh token"
+	FailedGenerateAccessToken    = "Failed to generate access token"
+	FailedGenerateOAuthState     = "Failed to generate OAuth state"
+	FailedStoreOAuthState        = "Failed to store OAuth state"
+	FailedDeleteOAuthState       = "Failed to delete OAuth state"
+	FailedGenerateOAuthLink      = "Failed to generate OAuth link"
+	FailedOAuthCallback          = "Failed to handle OAuth callback"
+	FailedUploadFile             = "Failed to upload file"
+	FailedReadFileForValidation  = "Failed read file for validation"
+	FailedToResetFileReadPointer = "Failed to reset file read pointer"
+	FileSizeExceedsLimit         = "File size exceeds the limit"
+	InvalidFileType              = "Invalid file type. Only JPG, JPEG, and PNG are allowed."
 )
 
 // Handler
