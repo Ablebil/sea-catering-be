@@ -10,12 +10,18 @@ import (
 	"github.com/Ablebil/sea-catering-be/internal/infra/oauth"
 	"github.com/Ablebil/sea-catering-be/internal/infra/postgresql"
 	"github.com/Ablebil/sea-catering-be/internal/infra/redis"
+	"github.com/Ablebil/sea-catering-be/internal/infra/supabase"
+	"github.com/Ablebil/sea-catering-be/internal/middleware"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/swagger"
 
 	AuthHandler "github.com/Ablebil/sea-catering-be/internal/app/auth/interface/rest"
 	AuthUsecase "github.com/Ablebil/sea-catering-be/internal/app/auth/usecase"
 	UserRepository "github.com/Ablebil/sea-catering-be/internal/app/user/repository"
+
+	TestimonialHandler "github.com/Ablebil/sea-catering-be/internal/app/testimonial/interface/rest"
+	TestimonialRepository "github.com/Ablebil/sea-catering-be/internal/app/testimonial/repository"
+	TestimonialUsecase "github.com/Ablebil/sea-catering-be/internal/app/testimonial/usecase"
 )
 
 func Start() error {
@@ -45,6 +51,8 @@ func Start() error {
 	email := email.NewEmail(config)
 	redis := redis.NewRedis(config)
 	oauth := oauth.NewOAuth(config)
+	supabase := supabase.NewSupabase(config)
+	middleware := middleware.NewMiddleware(jwt)
 
 	app := fiber.New(config)
 	v1 := app.Group("/api/v1")
@@ -53,6 +61,11 @@ func Start() error {
 	userRepository := UserRepository.NewUserRepository(db)
 	authUsecase := AuthUsecase.NewAuthUsecase(userRepository, db, config, jwt, email, redis, oauth)
 	AuthHandler.NewAuthHandler(v1, validator, authUsecase, config)
+
+	// Testimonial Domain
+	testimonialRepository := TestimonialRepository.NewTestimonialRepository(db)
+	testimonialUsecase := TestimonialUsecase.NewTestimonialUsecase(testimonialRepository, supabase)
+	TestimonialHandler.NewTestimonialHandler(v1, validator, testimonialUsecase, middleware)
 
 	// Swagger Documentation
 	app.Get("/swagger/*", swagger.HandlerDefault)

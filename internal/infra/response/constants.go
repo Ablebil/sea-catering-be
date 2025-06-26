@@ -28,6 +28,15 @@ const (
 	LogoutSuccess       = "Logout successful"
 )
 
+// Testimonial Domain
+const (
+	GetAllTestimonialsSuccess = "Get all testimonials successful"
+	CreateTestimonialSuccess  = "Create testimonial successful"
+
+	FailedGetAllTestimonials = "Failed to get all testimonials"
+	FailedCreateTestimonial  = "Failed to create testimonial"
+)
+
 // Others
 const (
 	FailedHashPassword         = "Failed to hash password"
@@ -42,10 +51,17 @@ const (
 	FailedDeleteOAuthState     = "Failed to delete OAuth state"
 	FailedGenerateOAuthLink    = "Failed to generate OAuth link"
 	FailedOAuthCallback        = "Failed to handle OAuth callback"
+	FailedUploadFile           = "Failed to upload file"
 )
 
 // Handler
 const (
-	FailedParsingRequestBody = "Failed parsing request body"
-	FailedValidateRequest    = "Failed to validate request"
+	FailedParsingRequestBody    = "Failed parsing request body"
+	FailedValidateRequest       = "Failed to validate request"
+	MissingAccessToken          = "Missing access token"
+	InvalidAccessToken          = "Invalid access token"
+	InvalidOrMissingBearerToken = "Invalid or missing bearer token"
+	InvalidFormData             = "Invalid form data"
+	FileIsRequired              = "File is required"
+	FailedToOpenFile            = "Failed to open file"
 )

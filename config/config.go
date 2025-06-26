@@ -38,6 +38,9 @@ type Config struct {
 
 	StateLength int           `env:"STATE_LENGTH"`
 	StateExpiry time.Duration `env:"STATE_EXPIRY"`
+
+	SupabaseURL string `env:"SUPABASE_URL"`
+	SupabaseKey string `env:"SUPABASE_KEY"`
 }
 
 func New() (*Config, error) {
