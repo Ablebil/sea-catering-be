@@ -24,6 +24,24 @@ definitions:
     required:
     - refresh_token
     type: object
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.MealPlanResponse:
+    properties:
+      description:
+        example: A healthy meal plan
+        type: string
+      id:
+        example: b3e1f8e2...
+        type: string
+      name:
+        example: John Doe
+        type: string
+      photo_url:
+        example: https://...
+        type: string
+      price:
+        example: 30000
+        type: number
+    type: object
   github_com_Ablebil_sea-catering-be_internal_domain_dto.RefreshTokenRequest:
     properties:
       refresh_token:
@@ -346,6 +364,66 @@ paths:
       summary: Verify OTP
       tags:
       - Authentication
+  /meal-plans/:
+    get:
+      description: Get all meal plans.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get all meal plans successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  items:
+                    $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.MealPlanResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      summary: Get All Meal Plans
+      tags:
+      - MealPlan
+  /meal-plans/{id}:
+    get:
+      description: Get meal plan detail by ID.
+      parameters:
+      - description: Meal Plan ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get meal plan by ID successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.MealPlanResponse'
+              type: object
+        "400":
+          description: Invalid meal plan ID
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "404":
+          description: Meal plan not found
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      summary: Get Meal Plan By ID
+      tags:
+      - MealPlan
   /testimonials/:
     get:
       description: Get all testimonials.

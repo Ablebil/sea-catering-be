@@ -385,6 +385,106 @@ const docTemplate = `{
                 }
             }
         },
+        "/meal-plans/": {
+            "get": {
+                "description": "Get all meal plans.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "MealPlan"
+                ],
+                "summary": "Get All Meal Plans",
+                "responses": {
+                    "200": {
+                        "description": "Get all meal plans successful",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "payload": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.MealPlanResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/meal-plans/{id}": {
+            "get": {
+                "description": "Get meal plan detail by ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "MealPlan"
+                ],
+                "summary": "Get Meal Plan By ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Meal Plan ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get meal plan by ID successful",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "payload": {
+                                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.MealPlanResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid meal plan ID",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "404": {
+                        "description": "Meal plan not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    }
+                }
+            }
+        },
         "/testimonials/": {
             "get": {
                 "description": "Get all testimonials.",
@@ -536,6 +636,31 @@ const docTemplate = `{
                 "refresh_token": {
                     "type": "string",
                     "example": "eyJhbGciOiJI..."
+                }
+            }
+        },
+        "github_com_Ablebil_sea-catering-be_internal_domain_dto.MealPlanResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "A healthy meal plan"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "b3e1f8e2..."
+                },
+                "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "photo_url": {
+                    "type": "string",
+                    "example": "https://..."
+                },
+                "price": {
+                    "type": "number",
+                    "example": 30000
                 }
             }
         },

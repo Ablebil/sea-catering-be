@@ -7,5 +7,5 @@ type MealPlanResponse struct {
 	Name        string    `json:"name" example:"John Doe"`
 	Description string    `json:"description" example:"A healthy meal plan"`
 	Price       float64   `json:"price" example:"30000"`
-	PhotoURL    string    `json:"photo_url" example:"https://"`
+	PhotoURL    string    `json:"photo_url" example:"https://..."`
 }
