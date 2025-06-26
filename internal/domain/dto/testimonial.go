@@ -5,15 +5,15 @@ import (
 )
 
 type CreateTestimonialRequest struct {
-	Name    string `json:"name" validate:"required,min=3,max=50"`
-	Message string `json:"message" validate:"required,min=10,max=500"`
-	Rating  int    `json:"rating" validate:"required,min=1,max=5"`
+	Name    string `json:"name" validate:"required,min=3,max=50" example:"John Doe"`
+	Message string `json:"message" validate:"required,min=10,max=500" example:"The food was delicious"`
+	Rating  int    `json:"rating" validate:"required,min=1,max=5" example:"5"`
 }
 
 type TestimonialResponse struct {
-	ID       uuid.UUID `json:"id"`
-	Name     string    `json:"name"`
-	Message  string    `json:"message"`
-	Rating   int       `json:"rating"`
-	PhotoURL string    `json:"photo_url"`
+	ID       uuid.UUID `json:"id" example:"b3e1f8e2..."`
+	Name     string    `json:"name" example:"John Doe"`
+	Message  string    `json:"message" example:"The food was delicious"`
+	Rating   int       `json:"rating" example:"5"`
+	PhotoURL string    `json:"photo_url" example:"https://..."`
 }

@@ -37,9 +37,9 @@ type TokenResponse struct {
 }
 
 type GoogleProfileResponse struct {
-	ID       string `json:"google_id" validate:"required"`
-	Email    string `json:"email" validate:"required, email"`
-	Username string `json:"username" validate:"required"`
-	Name     string `json:"name" validate:"required"`
-	Verified bool   `json:"verified" validate:"required"`
+	ID       string `json:"google_id" example:"1234567890"`
+	Email    string `json:"email" example:"john@example.com"`
+	Username string `json:"username" example:"john_doe"`
+	Name     string `json:"name" example:"John Doe"`
+	Verified bool   `json:"verified" example:"true"`
 }
