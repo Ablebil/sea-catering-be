@@ -23,6 +23,10 @@ import (
 	TestimonialHandler "github.com/Ablebil/sea-catering-be/internal/app/testimonial/interface/rest"
 	TestimonialRepository "github.com/Ablebil/sea-catering-be/internal/app/testimonial/repository"
 	TestimonialUsecase "github.com/Ablebil/sea-catering-be/internal/app/testimonial/usecase"
+
+	MealPlanHandler "github.com/Ablebil/sea-catering-be/internal/app/meal_plan/interface/rest"
+	MealPlanRepository "github.com/Ablebil/sea-catering-be/internal/app/meal_plan/repository"
+	MealPlanUsecase "github.com/Ablebil/sea-catering-be/internal/app/meal_plan/usecase"
 )
 
 func Start() error {
@@ -68,6 +72,11 @@ func Start() error {
 	testimonialRepository := TestimonialRepository.NewTestimonialRepository(db)
 	testimonialUsecase := TestimonialUsecase.NewTestimonialUsecase(testimonialRepository, supabase)
 	TestimonialHandler.NewTestimonialHandler(v1, validator, testimonialUsecase, middleware, helper, config)
+
+	// Meal Plan Domain
+	mealPlanRepository := MealPlanRepository.NewMealPlanRepository(db)
+	mealPlanUsecase := MealPlanUsecase.NewMealPlanUseCase(mealPlanRepository)
+	MealPlanHandler.NewMealPlanHandler(v1, mealPlanUsecase)
 
 	// Swagger Documentation
 	app.Get("/swagger/*", swagger.HandlerDefault)

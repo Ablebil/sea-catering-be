@@ -10,5 +10,6 @@ func Migrate(db *gorm.DB) error {
 		&entity.User{},
 		&entity.RefreshToken{},
 		&entity.Testimonial{},
+		&entity.MealPlan{},
 	)
 }

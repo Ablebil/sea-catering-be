@@ -30,11 +30,22 @@ const (
 
 // Testimonial Domain
 const (
-	GetAllTestimonialsSuccess = "Get all testimonials successful"
-	CreateTestimonialSuccess  = "Create testimonial successful"
-
 	FailedGetAllTestimonials = "Failed to get all testimonials"
 	FailedCreateTestimonial  = "Failed to create testimonial"
+
+	GetAllTestimonialsSuccess = "Get all testimonials successful"
+	CreateTestimonialSuccess  = "Create testimonial successful"
+)
+
+// Meal Plan Domain
+const (
+	MealPlanNotFound = "Meal plan not found"
+
+	FailedGetAllMealPlans = "Failed to get all meal plans"
+	FailedGetMealPlanByID = "Failed to get meal plan by ID"
+
+	GetAllMealPlansSuccess = "Get all meal plans successful"
+	GetMealPlanByIDSuccess = "Get meal plan by ID successful"
 )
 
 // Others
@@ -68,4 +79,5 @@ const (
 	InvalidFormData             = "Invalid form data"
 	FileIsRequired              = "File is required"
 	FailedToOpenFile            = "Failed to open file"
+	InvalidMealPlanID           = "Invalid meal plan ID"
 )
