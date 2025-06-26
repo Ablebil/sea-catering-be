@@ -14,7 +14,7 @@ import (
 )
 
 type TestimonialUsecaseItf interface {
-	GetAllTestimonials() ([]entity.Testimonial, *res.Err)
+	GetAllTestimonials() ([]dto.TestimonialResponse, *res.Err)
 	CreateTestimonial(userID uuid.UUID, req dto.CreateTestimonialRequest, photo multipart.File, photoHeader *multipart.FileHeader) *res.Err
 }
 
@@ -30,13 +30,24 @@ func NewTestimonialUsecase(testimonialRepository testimonialRepository.Testimoni
 	}
 }
 
-func (uc *TestimonialUsecase) GetAllTestimonials() ([]entity.Testimonial, *res.Err) {
+func (uc *TestimonialUsecase) GetAllTestimonials() ([]dto.TestimonialResponse, *res.Err) {
 	testimonials, err := uc.TestimonialRepository.GetAllTestimonials()
 	if err != nil {
 		return nil, res.ErrInternalServerError(res.FailedGetAllTestimonials)
 	}
 
-	return testimonials, nil
+	var result []dto.TestimonialResponse
+	for _, t := range testimonials {
+		result = append(result, dto.TestimonialResponse{
+			ID:       t.ID,
+			Name:     t.Name,
+			Message:  t.Message,
+			Rating:   t.Rating,
+			PhotoURL: t.PhotoURL,
+		})
+	}
+
+	return result, nil
 }
 
 func (uc *TestimonialUsecase) CreateTestimonial(userID uuid.UUID, req dto.CreateTestimonialRequest, photo multipart.File, photoHeader *multipart.FileHeader) *res.Err {
