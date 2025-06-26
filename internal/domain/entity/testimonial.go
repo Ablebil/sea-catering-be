@@ -16,6 +16,7 @@ type Testimonial struct {
 	Rating    int        `gorm:"column:rating;type:int;not null"`
 	PhotoURL  string     `gorm:"column:photo_url;type:text;not null"`
 	CreatedAt *time.Time `gorm:"column:created_at;type:timestamp;autoCreateTime"`
+	UpdatedAt *time.Time `gorm:"column:updated_at;type:timestamp;autoUpdateTime"`
 }
 
 func (t *Testimonial) BeforeCreate(tx *gorm.DB) (err error) {
