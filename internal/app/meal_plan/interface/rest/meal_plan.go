@@ -9,10 +9,10 @@ import (
 )
 
 type MealPlanHandler struct {
-	MealPlanUsecase usecase.MealPlanUseCaseItf
+	MealPlanUsecase usecase.MealPlanUsecaseItf
 }
 
-func NewMealPlanHandler(routerGroup fiber.Router, mealPlanUsecase usecase.MealPlanUseCaseItf) {
+func NewMealPlanHandler(routerGroup fiber.Router, mealPlanUsecase usecase.MealPlanUsecaseItf) {
 	mealPlanHandler := MealPlanHandler{
 		MealPlanUsecase: mealPlanUsecase,
 	}
@@ -54,9 +54,9 @@ func (h MealPlanHandler) GetMealPlanByID(ctx *fiber.Ctx) error {
 		return res.ErrBadRequest(res.InvalidMealPlanID)
 	}
 
-	mealPlan, err := h.MealPlanUsecase.GetMealPlanByID(id)
-	if err != nil {
-		return err
+	mealPlan, resErr := h.MealPlanUsecase.GetMealPlanByID(id)
+	if resErr != nil {
+		return resErr
 	}
 
 	return res.OK(ctx, mealPlan, res.GetMealPlanByIDSuccess)

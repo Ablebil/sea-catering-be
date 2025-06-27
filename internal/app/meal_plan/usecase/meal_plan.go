@@ -7,22 +7,22 @@ import (
 	"github.com/google/uuid"
 )
 
-type MealPlanUseCaseItf interface {
+type MealPlanUsecaseItf interface {
 	GetAllMealPlans() ([]dto.MealPlanResponse, *res.Err)
 	GetMealPlanByID(id uuid.UUID) (*dto.MealPlanResponse, *res.Err)
 }
 
-type MealPlanUseCase struct {
+type MealPlanUsecase struct {
 	MealPlanRepository mealPlanRepository.MealPlanRepositoryItf
 }
 
-func NewMealPlanUseCase(mealPlanRepository mealPlanRepository.MealPlanRepositoryItf) MealPlanUseCaseItf {
-	return &MealPlanUseCase{
+func NewMealPlanUsecase(mealPlanRepository mealPlanRepository.MealPlanRepositoryItf) MealPlanUsecaseItf {
+	return &MealPlanUsecase{
 		MealPlanRepository: mealPlanRepository,
 	}
 }
 
-func (uc *MealPlanUseCase) GetAllMealPlans() ([]dto.MealPlanResponse, *res.Err) {
+func (uc *MealPlanUsecase) GetAllMealPlans() ([]dto.MealPlanResponse, *res.Err) {
 	mealPlans, err := uc.MealPlanRepository.GetAllMealPlans()
 	if err != nil {
 		return nil, res.ErrInternalServerError(res.FailedGetAllMealPlans)
@@ -42,7 +42,7 @@ func (uc *MealPlanUseCase) GetAllMealPlans() ([]dto.MealPlanResponse, *res.Err) 
 	return result, nil
 }
 
-func (uc *MealPlanUseCase) GetMealPlanByID(id uuid.UUID) (*dto.MealPlanResponse, *res.Err) {
+func (uc *MealPlanUsecase) GetMealPlanByID(id uuid.UUID) (*dto.MealPlanResponse, *res.Err) {
 	mealPlan, err := uc.MealPlanRepository.GetMealPlanByID(id)
 	if err != nil {
 		return nil, res.ErrInternalServerError(res.FailedGetMealPlanByID)
