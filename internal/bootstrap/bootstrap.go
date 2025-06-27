@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"fmt"
+	"log"
 
 	conf "github.com/Ablebil/sea-catering-be/config"
 	"github.com/Ablebil/sea-catering-be/internal/infra/email"
@@ -55,6 +56,10 @@ func Start() error {
 
 	if err := postgresql.Migrate(db); err != nil {
 		return err
+	}
+
+	if err := postgresql.Seed(db); err != nil {
+		log.Printf("Failed to seed database: %v", err)
 	}
 
 	validator := validator.New()
