@@ -103,4 +103,5 @@ const (
 	FailedToOpenFile            = "Failed to open file"
 	InvalidMealPlanID           = "Invalid meal plan ID"
 	InvalidSubscriptionID       = "Invalid subscription ID"
+	AdminAccessRequired = "Admin access required"
 )

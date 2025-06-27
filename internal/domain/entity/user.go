@@ -7,6 +7,13 @@ import (
 	"gorm.io/gorm"
 )
 
+type UserRole string
+
+const (
+	RoleUser UserRole = "user"
+	RoleAdmin UserRole = "admin"
+)
+
 type User struct {
 	ID           uuid.UUID      `gorm:"column:id;type:char(36);primaryKey;not null"`
 	Email        string         `gorm:"column:email;type:varchar(255);unique;not null"`
@@ -14,7 +21,7 @@ type User struct {
 	Name         string         `gorm:"column:name;type:varchar(255);not null"`
 	GoogleID     *string        `gorm:"column:google_id;type:varchar(255);unique"`
 	Verified     bool           `gorm:"column:verified;type:bool;default:false"`
-	Role         string         `gorm:"column:role;type:varchar(255);default:'user';not null"`
+	Role         UserRole         `gorm:"column:role;type:varchar(255);default:'user';not null"`
 	RefreshToken []RefreshToken `gorm:"foreignKey:user_id;constraint:OnUpdate:SET NULL,OnDelete:CASCADE;"`
 	Testimonials []Testimonial  `gorm:"foreignKey:user_id;constraint:OnUpdate:SET NULL,OnDelete:CASCADE;"`
 	CreatedAt    *time.Time     `gorm:"column:created_at;type:timestamp;autoCreateTime"`

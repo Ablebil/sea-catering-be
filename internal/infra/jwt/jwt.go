@@ -5,12 +5,13 @@ import (
 	"time"
 
 	conf "github.com/Ablebil/sea-catering-be/config"
+	"github.com/Ablebil/sea-catering-be/internal/domain/entity"
 	jwt "github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
 
 type JWTItf interface {
-	GenerateAccessToken(userId uuid.UUID, name string, email string) (string, error)
+	GenerateAccessToken(userId uuid.UUID, name string, email string, role entity.UserRole) (string, error)
 	GenerateRefershToken(userId uuid.UUID, rememberMe bool) (string, error)
 	VerifyAccessToken(token string) (uuid.UUID, string, string, error)
 	VerifyRefreshToken(token string) (uuid.UUID, error)
@@ -29,9 +30,10 @@ func NewJWT(conf *conf.Config) JWTItf {
 }
 
 type AccessClaims struct {
-	UserID uuid.UUID `json:"user_id"`
-	Name   string    `json:"name"`
-	Email  string    `json:"email"`
+	UserID uuid.UUID       `json:"user_id"`
+	Name   string          `json:"name"`
+	Email  string          `json:"email"`
+	Role   entity.UserRole `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -41,11 +43,12 @@ type RefreshClaims struct {
 	jwt.RegisteredClaims
 }
 
-func (j *JWT) GenerateAccessToken(userId uuid.UUID, name string, email string) (string, error) {
+func (j *JWT) GenerateAccessToken(userId uuid.UUID, name string, email string, role entity.UserRole) (string, error) {
 	claims := AccessClaims{
 		UserID: userId,
 		Name:   name,
 		Email:  email,
+		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

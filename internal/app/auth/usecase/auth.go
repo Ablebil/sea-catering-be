@@ -141,7 +141,7 @@ func (uc *AuthUsecase) VerifyOTP(req dto.VerifyOTPRequest) (string, string, *res
 		return "", "", res.ErrInternalServerError(res.FailedUpdateUser)
 	}
 
-	accessToken, err := uc.jwt.GenerateAccessToken(user.ID, user.Name, user.Email)
+	accessToken, err := uc.jwt.GenerateAccessToken(user.ID, user.Name, user.Email, user.Role)
 	if err != nil {
 		return "", "", res.ErrInternalServerError(res.FailedGenerateAccessToken)
 	}
@@ -187,7 +187,7 @@ func (uc *AuthUsecase) Login(req dto.LoginRequest) (string, string, *res.Err) {
 		return "", "", res.ErrInternalServerError(res.FailedAddRefreshToken)
 	}
 
-	accessToken, err := uc.jwt.GenerateAccessToken(user.ID, user.Name, user.Email)
+	accessToken, err := uc.jwt.GenerateAccessToken(user.ID, user.Name, user.Email, user.Role)
 	if err != nil {
 		return "", "", res.ErrInternalServerError(res.FailedGenerateAccessToken)
 	}
@@ -301,7 +301,7 @@ func (uc *AuthUsecase) GoogleCallback(req *dto.GoogleCallbackRequest) (string, s
 		return "", "", false, res.ErrInternalServerError(res.FailedAddRefreshToken)
 	}
 
-	accessToken, err := uc.jwt.GenerateAccessToken(user.ID, user.Name, user.Email)
+	accessToken, err := uc.jwt.GenerateAccessToken(user.ID, user.Name, user.Email, user.Role)
 	if err != nil {
 		return "", "", false, res.ErrInternalServerError(res.FailedGenerateAccessToken)
 	}
@@ -323,7 +323,7 @@ func (uc *AuthUsecase) RefreshToken(req dto.RefreshTokenRequest) (string, string
 		return "", "", res.ErrUnauthorized(res.InvalidRefreshToken)
 	}
 
-	accessToken, err := uc.jwt.GenerateAccessToken(user.ID, user.Name, user.Email)
+	accessToken, err := uc.jwt.GenerateAccessToken(user.ID, user.Name, user.Email, user.Role)
 	if err != nil {
 		return "", "", res.ErrInternalServerError(res.FailedGenerateAccessToken)
 	}
