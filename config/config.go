@@ -2,7 +2,6 @@ package config
 
 import (
 	"log"
-	"os"
 	"time"
 
 	"github.com/caarlos0/env"
@@ -52,17 +51,17 @@ type Config struct {
 }
 
 func New() (*Config, error) {
-	appEnv := os.Getenv("APP_ENV")
-	if appEnv == "development" {
-		if err := godotenv.Load(); err != nil {
-			log.Printf("Warning: .env file not found: %v", err)
-		}
+	if err := godotenv.Load(); err != nil {
+		log.Printf("Warning: .env file not found: %v", err)
 	}
 
 	cfg := new(Config)
 	if err := env.Parse(cfg); err != nil {
 		return nil, err
 	}
+
+	log.Printf("DB Config - Host: %s, Port: %d, Name: %s, User: %s",
+		cfg.DBHost, cfg.DBPort, cfg.DBName, cfg.DBUser)
 
 	return cfg, nil
 }
