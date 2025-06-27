@@ -48,6 +48,26 @@ const (
 	GetMealPlanByIDSuccess = "Get meal plan by ID successful"
 )
 
+// Subscription Domain
+const (
+	SubscriptionNotFound = "Subscription not found"
+
+	FailedSaveSubscription         = "Failed to save subscription"
+	FailedCreatePaymentTransaction = "Failed to create payment transaction"
+	FailedGetAllSubscriptions      = "Failed to get all subscriptions"
+	FailedGetSubscriptionByID      = "Failed to get subscription by ID"
+	FailedUpdateSubscription       = "Failed to update subscription"
+	FailedPauseSubscription        = "Failed to pause subscription"
+	FailedCancelSubscription       = "Failed to cancel subscription"
+	FailedGetExpiredSubscriptions  = "Failed to get expired subscriptions"
+
+	CreateSubscriptionSuccess  = "Subscription created successful"
+	GetAllSubscriptionsSuccess = "Get all subscriptions successful"
+	PauseSubscriptionSuccess   = "Subscription paused successful"
+	CancelSubscriptionSuccess  = "Subscription cancelled successful"
+	WebhookProcessedSuccess    = "Webhook processed successful"
+)
+
 // Others
 const (
 	FailedHashPassword           = "Failed to hash password"
@@ -67,6 +87,8 @@ const (
 	FailedToResetFileReadPointer = "Failed to reset file read pointer"
 	FileSizeExceedsLimit         = "File size exceeds the limit"
 	InvalidFileType              = "Invalid file type. Only JPG, JPEG, and PNG are allowed."
+	InvalidOrderID               = "Invalid order ID"
+	InvalidTransactionStatus     = "Invalid transaction status"
 )
 
 // Handler
@@ -80,4 +102,5 @@ const (
 	FileIsRequired              = "File is required"
 	FailedToOpenFile            = "Failed to open file"
 	InvalidMealPlanID           = "Invalid meal plan ID"
+	InvalidSubscriptionID       = "Invalid subscription ID"
 )

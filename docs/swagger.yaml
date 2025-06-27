@@ -1,5 +1,46 @@
 basePath: /api/v1
 definitions:
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.CreateSubscriptionRequest:
+    properties:
+      allergies:
+        example: Peanuts, Shellfish
+        type: string
+      delivery_days:
+        example:
+        - monday
+        - tuesday
+        - wednesday
+        items:
+          type: string
+        minItems: 1
+        type: array
+      meal_plan_id:
+        example: b3e1f8e2...
+        type: string
+      meal_types:
+        example:
+        - breakfast
+        - lunch
+        items:
+          type: string
+        minItems: 1
+        type: array
+      name:
+        example: John Doe
+        maxLength: 50
+        minLength: 3
+        type: string
+      phone_number:
+        example: "081234567890"
+        minLength: 10
+        type: string
+    required:
+    - delivery_days
+    - meal_plan_id
+    - meal_types
+    - name
+    - phone_number
+    type: object
   github_com_Ablebil_sea-catering-be_internal_domain_dto.LoginRequest:
     properties:
       email:
@@ -42,6 +83,27 @@ definitions:
         example: 30000
         type: number
     type: object
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.PauseSubscriptionRequest:
+    properties:
+      end_date:
+        example: "2025-01-30"
+        type: string
+      start_date:
+        example: "2025-01-15"
+        type: string
+    required:
+    - end_date
+    - start_date
+    type: object
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.PaymentResponse:
+    properties:
+      redirect_url:
+        example: https://app.sandbox.midtrans.com/snap/v3/redirection/66e4fa55...
+        type: string
+      token:
+        example: 66e4fa55...
+        type: string
+    type: object
   github_com_Ablebil_sea-catering-be_internal_domain_dto.RefreshTokenRequest:
     properties:
       refresh_token:
@@ -66,6 +128,59 @@ definitions:
     - email
     - name
     - password
+    type: object
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.SubscriptionResponse:
+    properties:
+      allergies:
+        example: Peanuts, Shellfish
+        type: string
+      created_at:
+        example: "2025-01-10"
+        type: string
+      delivery_days:
+        example:
+        - monday
+        - tuesday
+        - wednesday
+        items:
+          type: string
+        type: array
+      end_date:
+        example: "2025-02-10"
+        type: string
+      id:
+        example: b3e1f8e2...
+        type: string
+      meal_plan:
+        $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.MealPlanResponse'
+      meal_types:
+        example:
+        - breakfast
+        - lunch
+        items:
+          type: string
+        type: array
+      name:
+        example: John Doe
+        type: string
+      pause_end_date:
+        example: "2025-01-30"
+        type: string
+      pause_start_date:
+        example: "2025-01-15"
+        type: string
+      phone_number:
+        example: "08123456789"
+        type: string
+      start_date:
+        example: "2025-01-10"
+        type: string
+      status:
+        example: pending
+        type: string
+      total_price:
+        example: 180000
+        type: number
     type: object
   github_com_Ablebil_sea-catering-be_internal_domain_dto.TestimonialResponse:
     properties:
@@ -424,6 +539,225 @@ paths:
       summary: Get Meal Plan By ID
       tags:
       - MealPlan
+  /subscriptions/:
+    get:
+      description: Retrieve all subscriptions for the authenticated user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get user subscriptions successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  items:
+                    $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.SubscriptionResponse'
+                  type: array
+              type: object
+        "401":
+          description: Missing or invalid access token
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      security:
+      - ApiKeyAuth: []
+      summary: Get User Subscriptions
+      tags:
+      - Subscription
+    post:
+      consumes:
+      - application/json
+      description: Create a new meal plan subscription with payment.
+      parameters:
+      - description: Create Subscription Request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.CreateSubscriptionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Subscription created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.PaymentResponse'
+              type: object
+        "400":
+          description: Invalid request body or validation error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "401":
+          description: Missing or invalid access token
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "404":
+          description: Meal plan not found
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Subscription
+      tags:
+      - Subscription
+  /subscriptions/{id}:
+    delete:
+      description: Permanently cancel a subscription. This action cannot be undone.
+      parameters:
+      - description: Subscription ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Subscription cancelled successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.SubscriptionResponse'
+              type: object
+        "400":
+          description: Invalid subscription ID
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "401":
+          description: Missing or invalid access token
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "403":
+          description: Not authorized to cancel this subscription
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "404":
+          description: Subscription not found
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      security:
+      - ApiKeyAuth: []
+      summary: Cancel Subscription
+      tags:
+      - Subscription
+  /subscriptions/{id}/pause:
+    put:
+      consumes:
+      - application/json
+      description: Temporarily pause a subscription by specifying start and end dates.
+        The subscription duration will be extended by the pause period.
+      parameters:
+      - description: Subscription ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Pause Subscription Request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.PauseSubscriptionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Subscription paused successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.SubscriptionResponse'
+              type: object
+        "400":
+          description: Invalid subscription ID or request body
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "401":
+          description: Missing or invalid access token
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "403":
+          description: Not authorized to pause this subscription
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "404":
+          description: Subscription not found
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      security:
+      - ApiKeyAuth: []
+      summary: Pause Subscription
+      tags:
+      - Subscription
+  /subscriptions/webhook/midtrans:
+    post:
+      consumes:
+      - application/json
+      description: Handle payment notification from Midtrans payment gateway. This
+        endpoint is called by Midtrans to notify payment status changes.
+      parameters:
+      - description: Midtrans Notification
+        in: body
+        name: payload
+        required: true
+        schema:
+          properties:
+            order_id:
+              type: string
+            payment_type:
+              type: string
+            transaction_status:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Webhook processed successfully
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+        "400":
+          description: Invalid notification data
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "404":
+          description: Subscription not found
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      summary: Handle Midtrans Webhook
+      tags:
+      - Subscription
   /testimonials/:
     get:
       description: Get all testimonials.

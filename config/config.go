@@ -43,6 +43,10 @@ type Config struct {
 	SupabaseKey string `env:"SUPABASE_KEY"`
 
 	MaxFileSize int `env:"MAX_FILE_SIZE"`
+
+	MidtransClientKey       string        `env:"MIDTRANS_CLIENT_KEY"`
+	MidtransServerKey       string        `env:"MIDTRANS_SERVER_KEY"`
+	MidtransPaymentDuration time.Duration `env:"MIDTRANS_PAYMENT_DURATION"`
 }
 
 func New() (*Config, error) {

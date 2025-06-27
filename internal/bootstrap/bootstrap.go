@@ -7,12 +7,14 @@ import (
 	"github.com/Ablebil/sea-catering-be/internal/infra/email"
 	"github.com/Ablebil/sea-catering-be/internal/infra/fiber"
 	"github.com/Ablebil/sea-catering-be/internal/infra/jwt"
+	"github.com/Ablebil/sea-catering-be/internal/infra/midtrans"
 	"github.com/Ablebil/sea-catering-be/internal/infra/oauth"
 	"github.com/Ablebil/sea-catering-be/internal/infra/postgresql"
 	"github.com/Ablebil/sea-catering-be/internal/infra/redis"
 	"github.com/Ablebil/sea-catering-be/internal/infra/supabase"
 	"github.com/Ablebil/sea-catering-be/internal/middleware"
 	"github.com/Ablebil/sea-catering-be/internal/pkg/helper"
+	"github.com/Ablebil/sea-catering-be/internal/pkg/scheduler"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/swagger"
 
@@ -27,6 +29,10 @@ import (
 	MealPlanHandler "github.com/Ablebil/sea-catering-be/internal/app/meal_plan/interface/rest"
 	MealPlanRepository "github.com/Ablebil/sea-catering-be/internal/app/meal_plan/repository"
 	MealPlanUsecase "github.com/Ablebil/sea-catering-be/internal/app/meal_plan/usecase"
+
+	SubscriptionHandler "github.com/Ablebil/sea-catering-be/internal/app/subscription/interface/rest"
+	SubscriptionRepository "github.com/Ablebil/sea-catering-be/internal/app/subscription/repository"
+	SubscriptionUsecase "github.com/Ablebil/sea-catering-be/internal/app/subscription/usecase"
 )
 
 func Start() error {
@@ -57,6 +63,7 @@ func Start() error {
 	redis := redis.NewRedis(config)
 	oauth := oauth.NewOAuth(config)
 	supabase := supabase.NewSupabase(config)
+	midtrans := midtrans.NewMidtrans(config)
 	middleware := middleware.NewMiddleware(jwt)
 	helper := helper.NewHelper()
 
@@ -77,6 +84,14 @@ func Start() error {
 	mealPlanRepository := MealPlanRepository.NewMealPlanRepository(db)
 	mealPlanUsecase := MealPlanUsecase.NewMealPlanUsecase(mealPlanRepository)
 	MealPlanHandler.NewMealPlanHandler(v1, mealPlanUsecase)
+
+	// Subscription Domain
+	subscriptionRepository := SubscriptionRepository.NewSubscriptionRepository(db)
+	subscriptionUsecase := SubscriptionUsecase.NewSubscriptionUsecase(subscriptionRepository, mealPlanRepository, midtrans)
+	SubscriptionHandler.NewSubscriptionHandler(v1, validator, subscriptionUsecase, middleware)
+
+	scheduler := scheduler.NewScheduler(subscriptionUsecase)
+	scheduler.Start()
 
 	// Swagger Documentation
 	app.Get("/swagger/*", swagger.HandlerDefault)

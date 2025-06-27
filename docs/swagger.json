@@ -479,6 +479,360 @@
                 }
             }
         },
+        "/subscriptions/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve all subscriptions for the authenticated user.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Get User Subscriptions",
+                "responses": {
+                    "200": {
+                        "description": "Get user subscriptions successful",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "payload": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.SubscriptionResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid access token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new meal plan subscription with payment.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Create Subscription",
+                "parameters": [
+                    {
+                        "description": "Create Subscription Request",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.CreateSubscriptionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Subscription created successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "payload": {
+                                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.PaymentResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body or validation error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid access token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "404": {
+                        "description": "Meal plan not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/subscriptions/webhook/midtrans": {
+            "post": {
+                "description": "Handle payment notification from Midtrans payment gateway. This endpoint is called by Midtrans to notify payment status changes.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Handle Midtrans Webhook",
+                "parameters": [
+                    {
+                        "description": "Midtrans Notification",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "order_id": {
+                                    "type": "string"
+                                },
+                                "payment_type": {
+                                    "type": "string"
+                                },
+                                "transaction_status": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Webhook processed successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid notification data",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "404": {
+                        "description": "Subscription not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/subscriptions/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Permanently cancel a subscription. This action cannot be undone.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Cancel Subscription",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Subscription ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Subscription cancelled successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "payload": {
+                                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.SubscriptionResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid subscription ID",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid access token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "403": {
+                        "description": "Not authorized to cancel this subscription",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "404": {
+                        "description": "Subscription not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/subscriptions/{id}/pause": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Temporarily pause a subscription by specifying start and end dates. The subscription duration will be extended by the pause period.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Pause Subscription",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Subscription ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Pause Subscription Request",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.PauseSubscriptionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Subscription paused successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "payload": {
+                                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.SubscriptionResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid subscription ID or request body",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid access token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "403": {
+                        "description": "Not authorized to pause this subscription",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "404": {
+                        "description": "Subscription not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    }
+                }
+            }
+        },
         "/testimonials/": {
             "get": {
                 "description": "Get all testimonials.",
@@ -599,6 +953,60 @@
         }
     },
     "definitions": {
+        "github_com_Ablebil_sea-catering-be_internal_domain_dto.CreateSubscriptionRequest": {
+            "type": "object",
+            "required": [
+                "delivery_days",
+                "meal_plan_id",
+                "meal_types",
+                "name",
+                "phone_number"
+            ],
+            "properties": {
+                "allergies": {
+                    "type": "string",
+                    "example": "Peanuts, Shellfish"
+                },
+                "delivery_days": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "monday",
+                        "tuesday",
+                        "wednesday"
+                    ]
+                },
+                "meal_plan_id": {
+                    "type": "string",
+                    "example": "b3e1f8e2..."
+                },
+                "meal_types": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "breakfast",
+                        "lunch"
+                    ]
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 3,
+                    "example": "John Doe"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "minLength": 10,
+                    "example": "081234567890"
+                }
+            }
+        },
         "github_com_Ablebil_sea-catering-be_internal_domain_dto.LoginRequest": {
             "type": "object",
             "required": [
@@ -658,6 +1066,36 @@
                 }
             }
         },
+        "github_com_Ablebil_sea-catering-be_internal_domain_dto.PauseSubscriptionRequest": {
+            "type": "object",
+            "required": [
+                "end_date",
+                "start_date"
+            ],
+            "properties": {
+                "end_date": {
+                    "type": "string",
+                    "example": "2025-01-30"
+                },
+                "start_date": {
+                    "type": "string",
+                    "example": "2025-01-15"
+                }
+            }
+        },
+        "github_com_Ablebil_sea-catering-be_internal_domain_dto.PaymentResponse": {
+            "type": "object",
+            "properties": {
+                "redirect_url": {
+                    "type": "string",
+                    "example": "https://app.sandbox.midtrans.com/snap/v3/redirection/66e4fa55..."
+                },
+                "token": {
+                    "type": "string",
+                    "example": "66e4fa55..."
+                }
+            }
+        },
         "github_com_Ablebil_sea-catering-be_internal_domain_dto.RefreshTokenRequest": {
             "type": "object",
             "required": [
@@ -690,6 +1128,79 @@
                     "type": "string",
                     "minLength": 8,
                     "example": "Str0ngP@ssword"
+                }
+            }
+        },
+        "github_com_Ablebil_sea-catering-be_internal_domain_dto.SubscriptionResponse": {
+            "type": "object",
+            "properties": {
+                "allergies": {
+                    "type": "string",
+                    "example": "Peanuts, Shellfish"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2025-01-10"
+                },
+                "delivery_days": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "monday",
+                        "tuesday",
+                        "wednesday"
+                    ]
+                },
+                "end_date": {
+                    "type": "string",
+                    "example": "2025-02-10"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "b3e1f8e2..."
+                },
+                "meal_plan": {
+                    "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.MealPlanResponse"
+                },
+                "meal_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "breakfast",
+                        "lunch"
+                    ]
+                },
+                "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "pause_end_date": {
+                    "type": "string",
+                    "example": "2025-01-30"
+                },
+                "pause_start_date": {
+                    "type": "string",
+                    "example": "2025-01-15"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "example": "08123456789"
+                },
+                "start_date": {
+                    "type": "string",
+                    "example": "2025-01-10"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "pending"
+                },
+                "total_price": {
+                    "type": "number",
+                    "example": 180000
                 }
             }
         },
