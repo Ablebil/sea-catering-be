@@ -75,7 +75,7 @@ func Start() error {
 
 	// Meal Plan Domain
 	mealPlanRepository := MealPlanRepository.NewMealPlanRepository(db)
-	mealPlanUsecase := MealPlanUsecase.NewMealPlanUseCase(mealPlanRepository)
+	mealPlanUsecase := MealPlanUsecase.NewMealPlanUsecase(mealPlanRepository)
 	MealPlanHandler.NewMealPlanHandler(v1, mealPlanUsecase)
 
 	// Swagger Documentation
