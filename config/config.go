@@ -1,6 +1,8 @@
 package config
 
 import (
+	"log"
+	"os"
 	"time"
 
 	"github.com/caarlos0/env"
@@ -50,8 +52,11 @@ type Config struct {
 }
 
 func New() (*Config, error) {
-	if err := godotenv.Load(); err != nil {
-		panic(err)
+	appEnv := os.Getenv("APP_ENV")
+	if appEnv == "development" {
+		if err := godotenv.Load(); err != nil {
+			log.Printf("Warning: .env file not found: %v", err)
+		}
 	}
 
 	cfg := new(Config)
