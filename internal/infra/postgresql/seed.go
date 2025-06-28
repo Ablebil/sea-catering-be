@@ -139,7 +139,7 @@ func seedMealPlans(db *gorm.DB) error {
 
 	for _, mealPlan := range mealPlans {
 		var existingMealPlan entity.MealPlan
-		err := db.Where("id = ?", mealPlan.ID).First(&existingMealPlan).Error
+		err := db.Where("name = ?", mealPlan.Name).First(&existingMealPlan).Error
 
 		if err == gorm.ErrRecordNotFound {
 			now := time.Now()
@@ -217,7 +217,7 @@ func seedTestimonials(db *gorm.DB) error {
 		}
 
 		var existingTestimonial entity.Testimonial
-		err = db.Where("id = ?", testimonial.ID).First(&existingTestimonial).Error
+		err = db.Where("name = ?", testimonial.Name).First(&existingTestimonial).Error
 
 		if err == gorm.ErrRecordNotFound {
 			now := time.Now()
