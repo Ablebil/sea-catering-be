@@ -23,6 +23,8 @@ import (
 	AuthUsecase "github.com/Ablebil/sea-catering-be/internal/app/auth/usecase"
 	UserRepository "github.com/Ablebil/sea-catering-be/internal/app/user/repository"
 
+	UserUsecase "github.com/Ablebil/sea-catering-be/internal/app/user/usecase"
+
 	TestimonialHandler "github.com/Ablebil/sea-catering-be/internal/app/testimonial/interface/rest"
 	TestimonialRepository "github.com/Ablebil/sea-catering-be/internal/app/testimonial/repository"
 	TestimonialUsecase "github.com/Ablebil/sea-catering-be/internal/app/testimonial/usecase"
@@ -80,6 +82,9 @@ func Start() error {
 	authUsecase := AuthUsecase.NewAuthUsecase(userRepository, db, config, jwt, email, redis, oauth)
 	AuthHandler.NewAuthHandler(v1, validator, authUsecase, config)
 
+	// User Domain
+	userUsecase := UserUsecase.NewUserUsecase(userRepository)
+
 	// Testimonial Domain
 	testimonialRepository := TestimonialRepository.NewTestimonialRepository(db)
 	testimonialUsecase := TestimonialUsecase.NewTestimonialUsecase(testimonialRepository, supabase)
@@ -95,7 +100,7 @@ func Start() error {
 	subscriptionUsecase := SubscriptionUsecase.NewSubscriptionUsecase(subscriptionRepository, mealPlanRepository, midtrans)
 	SubscriptionHandler.NewSubscriptionHandler(v1, validator, subscriptionUsecase, middleware)
 
-	scheduler := scheduler.NewScheduler(subscriptionUsecase)
+	scheduler := scheduler.NewScheduler(subscriptionUsecase, userUsecase)
 	scheduler.Start()
 
 	// Swagger Documentation

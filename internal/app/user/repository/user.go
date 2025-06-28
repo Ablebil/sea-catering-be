@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"time"
 
 	"github.com/Ablebil/sea-catering-be/internal/domain/entity"
 	"github.com/google/uuid"
@@ -16,6 +17,7 @@ type UserRepositoryItf interface {
 	AddRefreshToken(userId uuid.UUID, token string) error
 	GetRefreshTokens(userId uuid.UUID) ([]entity.RefreshToken, error)
 	RemoveRefreshToken(token string) error
+	RemoveUnverifiedUsers() error
 }
 
 type UserRepository struct {
@@ -81,4 +83,8 @@ func (r *UserRepository) GetRefreshTokens(userId uuid.UUID) ([]entity.RefreshTok
 
 func (r *UserRepository) RemoveRefreshToken(token string) error {
 	return r.db.Where("token = ?", token).Delete(&entity.RefreshToken{}).Error
+}
+
+func (r *UserRepository) RemoveUnverifiedUsers() error {
+	return r.db.Where("verified = ? AND created_at < ?", false, time.Now().Add(-24*time.Hour)).Delete(&entity.User{}).Error
 }

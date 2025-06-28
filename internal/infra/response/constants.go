@@ -28,6 +28,11 @@ const (
 	LogoutSuccess       = "Logout successful"
 )
 
+// User Domain
+const (
+	FailedRemoveUnverifiedUsers = "Failed to remove unverified users"
+)
+
 // Testimonial Domain
 const (
 	FailedGetAllTestimonials = "Failed to get all testimonials"
@@ -103,5 +108,5 @@ const (
 	FailedToOpenFile            = "Failed to open file"
 	InvalidMealPlanID           = "Invalid meal plan ID"
 	InvalidSubscriptionID       = "Invalid subscription ID"
-	AdminAccessRequired = "Admin access required"
+	AdminAccessRequired         = "Admin access required"
 )
