@@ -12,6 +12,7 @@ import (
 type UserRepositoryItf interface {
 	GetUserByEmail(email string) (*entity.User, error)
 	GetUserByRefreshToken(refreshToken string) (*entity.User, error)
+	GetUserByID(id uuid.UUID) (*entity.User, error)
 	CreateUser(user *entity.User) error
 	UpdateUser(email string, user *entity.User) error
 	AddRefreshToken(userId uuid.UUID, token string) error
@@ -56,6 +57,21 @@ func (r *UserRepository) GetUserByRefreshToken(token string) (*entity.User, erro
 	}
 
 	return refreshToken.User, nil
+}
+
+func (r *UserRepository) GetUserByID(id uuid.UUID) (*entity.User, error) {
+	var user entity.User
+	err := r.db.Where("id = ?", id).First(&user).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 func (r *UserRepository) CreateUser(user *entity.User) error {

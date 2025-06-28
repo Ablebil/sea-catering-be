@@ -31,6 +31,9 @@ const (
 // User Domain
 const (
 	FailedRemoveUnverifiedUsers = "Failed to remove unverified users"
+	FailedGetUserProfile        = "Failed to get user profile"
+
+	GetProfileSuccess = "Get profile successful"
 )
 
 // Testimonial Domain
