@@ -5,9 +5,9 @@ import (
 )
 
 type CreateTestimonialRequest struct {
-	Name    string `json:"name" validate:"required,min=3,max=50" example:"John Doe"`
-	Message string `json:"message" validate:"required,min=10,max=500" example:"The food was delicious"`
-	Rating  int    `json:"rating" validate:"required,min=1,max=5" example:"5"`
+	Name    string `form:"name" validate:"required,min=3,max=50" example:"John Doe"`
+	Message string `form:"message" validate:"required,min=10,max=500" example:"The food was delicious"`
+	Rating  int    `form:"rating" validate:"required,min=1,max=5" example:"5"`
 }
 
 type TestimonialResponse struct {
