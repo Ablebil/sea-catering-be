@@ -2,6 +2,7 @@ package rest
 
 import (
 	userUsecase "github.com/Ablebil/sea-catering-be/internal/app/user/usecase"
+	_ "github.com/Ablebil/sea-catering-be/internal/domain/dto"
 	res "github.com/Ablebil/sea-catering-be/internal/infra/response"
 	"github.com/Ablebil/sea-catering-be/internal/middleware"
 	"github.com/gofiber/fiber/v2"
@@ -21,6 +22,15 @@ func NewUserHandler(routerGroup fiber.Router, userUsecase userUsecase.UserUsecas
 	routerGroup.Get("/profile", middleware.Authentication, userHandler.GetProfile)
 }
 
+// @Summary      Get User Profile
+// @Description  Get the authenticated user's profile.
+// @Tags         User
+// @Produce      json
+// @Success      200  {object}  res.Res{payload=dto.UserResponse} "Get profile successful"
+// @Failure      401  {object}  res.Err "Unauthorized"
+// @Failure      500  {object}  res.Err "Internal Server Error"
+// @Security     ApiKeyAuth
+// @Router       /users/profile [get]
 func (h UserHandler) GetProfile(ctx *fiber.Ctx) error {
 	userID := ctx.Locals("userID").(uuid.UUID)
 

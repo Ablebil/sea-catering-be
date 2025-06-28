@@ -23,6 +23,7 @@ import (
 	AuthUsecase "github.com/Ablebil/sea-catering-be/internal/app/auth/usecase"
 	UserRepository "github.com/Ablebil/sea-catering-be/internal/app/user/repository"
 
+	UserHandler "github.com/Ablebil/sea-catering-be/internal/app/user/interface/rest"
 	UserUsecase "github.com/Ablebil/sea-catering-be/internal/app/user/usecase"
 
 	TestimonialHandler "github.com/Ablebil/sea-catering-be/internal/app/testimonial/interface/rest"
@@ -84,6 +85,7 @@ func Start() error {
 
 	// User Domain
 	userUsecase := UserUsecase.NewUserUsecase(userRepository)
+	UserHandler.NewUserHandler(v1, userUsecase, middleware)
 
 	// Testimonial Domain
 	testimonialRepository := TestimonialRepository.NewTestimonialRepository(db)

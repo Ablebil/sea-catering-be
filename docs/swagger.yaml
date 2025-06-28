@@ -209,6 +209,15 @@ definitions:
         example: eyJhbGciOiJI...
         type: string
     type: object
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.UserResponse:
+    properties:
+      email:
+        example: john@example.com
+        type: string
+      name:
+        example: John Doe
+        type: string
+    type: object
   github_com_Ablebil_sea-catering-be_internal_domain_dto.VerifyOTPRequest:
     properties:
       email:
@@ -835,6 +844,34 @@ paths:
       summary: Create Testimonial
       tags:
       - Testimonial
+  /users/profile:
+    get:
+      description: Get the authenticated user's profile.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get profile successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.UserResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      security:
+      - ApiKeyAuth: []
+      summary: Get User Profile
+      tags:
+      - User
 securityDefinitions:
   ApiKeyAuth:
     description: Enter your bearer token in the format `Bearer {token}`
