@@ -16,8 +16,8 @@ type CreateSubscriptionRequest struct {
 }
 
 type PauseSubscriptionRequest struct {
-	StartDate time.Time `json:"start_date" validate:"required" example:"2025-01-15"`
-	EndDate   time.Time `json:"end_date" validate:"required" example:"2025-01-30"`
+	StartDate string `json:"start_date" validate:"required,datetime=2006-01-02" example:"2025-01-15"`
+	EndDate   string `json:"end_date" validate:"required,datetime=2006-01-02" example:"2025-01-30"`
 }
 
 type GetSubscriptionStatisticRequest struct {

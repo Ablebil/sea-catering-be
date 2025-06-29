@@ -152,11 +152,16 @@ func (uc *SubscriptionUsecase) PauseSubscription(userID uuid.UUID, subscriptionI
 		return nil, res.ErrNotFound(res.SubscriptionNotFound)
 	}
 
-	sub.PauseStartDate = &req.StartDate
-	sub.PauseEndDate = &req.EndDate
+	startDate, endDate, parseErr := uc.helper.ParseDateRange(req.StartDate, req.EndDate)
+	if parseErr != nil {
+		return nil, parseErr
+	}
+
+	sub.PauseStartDate = &startDate
+	sub.PauseEndDate = &endDate
 	sub.Status = entity.StatusPaused
 
-	pauseDuration := req.EndDate.Sub(req.StartDate)
+	pauseDuration := endDate.Sub(startDate)
 	if sub.EndDate != nil {
 		newEndDate := sub.EndDate.Add(pauseDuration)
 		sub.EndDate = &newEndDate
