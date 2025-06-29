@@ -3,7 +3,6 @@ package rest
 import (
 	"github.com/Ablebil/sea-catering-be/internal/app/meal_plan/usecase"
 	"github.com/Ablebil/sea-catering-be/internal/domain/dto"
-	_ "github.com/Ablebil/sea-catering-be/internal/domain/dto"
 	res "github.com/Ablebil/sea-catering-be/internal/infra/response"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
