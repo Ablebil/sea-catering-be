@@ -19,7 +19,7 @@ func (m *Middleware) Authentication(ctx *fiber.Ctx) error {
 		return res.ErrUnauthorized(res.InvalidOrMissingBearerToken)
 	}
 
-	userID, name, email, err := m.jwt.VerifyAccessToken(parts[1])
+	userID, name, email, role, err := m.jwt.VerifyAccessToken(parts[1])
 	if err != nil {
 		fmt.Println("Detailed Error:", err)
 		return res.ErrUnauthorized(res.InvalidAccessToken)
@@ -28,6 +28,7 @@ func (m *Middleware) Authentication(ctx *fiber.Ctx) error {
 	ctx.Locals("userID", userID)
 	ctx.Locals("name", name)
 	ctx.Locals("email", email)
+	ctx.Locals("role", *role)
 
 	return ctx.Next()
 }

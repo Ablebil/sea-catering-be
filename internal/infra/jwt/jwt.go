@@ -13,7 +13,7 @@ import (
 type JWTItf interface {
 	GenerateAccessToken(userId uuid.UUID, name string, email string, role entity.UserRole) (string, error)
 	GenerateRefershToken(userId uuid.UUID, rememberMe bool) (string, error)
-	VerifyAccessToken(token string) (uuid.UUID, string, string, error)
+	VerifyAccessToken(token string) (uuid.UUID, string, string, *entity.UserRole, error)
 	VerifyRefreshToken(token string) (uuid.UUID, error)
 }
 
@@ -80,21 +80,21 @@ func (j *JWT) GenerateRefershToken(userId uuid.UUID, rememberMe bool) (string, e
 	return token.SignedString([]byte(j.refreshSecret))
 }
 
-func (j *JWT) VerifyAccessToken(tokenString string) (uuid.UUID, string, string, error) {
+func (j *JWT) VerifyAccessToken(tokenString string) (uuid.UUID, string, string, *entity.UserRole, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &AccessClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(j.accessSecret), nil
 	})
 
 	if err != nil {
-		return uuid.Nil, "", "", err
+		return uuid.Nil, "", "", nil, err
 	}
 
 	claims, ok := token.Claims.(*AccessClaims)
 	if !ok || !token.Valid {
-		return uuid.Nil, "", "", errors.New("couldn't parse access token claims")
+		return uuid.Nil, "", "", nil, errors.New("couldn't parse access token claims")
 	}
 
-	return claims.UserID, claims.Name, claims.Email, nil
+	return claims.UserID, claims.Name, claims.Email, &claims.Role, nil
 }
 
 func (j *JWT) VerifyRefreshToken(tokenString string) (uuid.UUID, error) {
