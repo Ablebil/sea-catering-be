@@ -12,5 +12,6 @@ func Migrate(db *gorm.DB) error {
 		&entity.Testimonial{},
 		&entity.MealPlan{},
 		&entity.Subscription{},
+		&entity.SubscriptionStatusLog{},
 	)
 }
