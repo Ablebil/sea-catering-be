@@ -60,18 +60,20 @@ func (uc *SubscriptionUsecase) CreateSubscription(userID uuid.UUID, email string
 	end := now.Add(30 * 24 * time.Hour)
 
 	newSubscription := &entity.Subscription{
-		UserID:       userID,
-		MealPlanID:   req.MealPlanID,
-		Name:         req.Name,
-		PhoneNumber:  req.PhoneNumber,
-		Status:       entity.StatusPending,
-		MealTypes:    strings.Join(req.MealTypes, ","),
-		DeliveryDays: strings.Join(req.DeliveryDays, ","),
-		Allergies:    req.Allergies,
-		TotalPrice:   totalPrice,
-		OrderID:      &orderID,
-		StartDate:    now,
-		EndDate:      &end,
+		UserID:          userID,
+		MealPlanID:      req.MealPlanID,
+		Name:            req.Name,
+		PhoneNumber:     req.PhoneNumber,
+		DeliveryAddress: req.DeliveryAddress,
+		DeliveryNotes:   req.DeliveryNotes,
+		Status:          entity.StatusPending,
+		MealTypes:       strings.Join(req.MealTypes, ","),
+		DeliveryDays:    strings.Join(req.DeliveryDays, ","),
+		Allergies:       req.Allergies,
+		TotalPrice:      totalPrice,
+		OrderID:         &orderID,
+		StartDate:       now,
+		EndDate:         &end,
 	}
 
 	if err := uc.SubscriptionRepository.CreateSubscription(newSubscription); err != nil {
@@ -125,17 +127,19 @@ func (uc *SubscriptionUsecase) GetUserSubscriptions(userID uuid.UUID) ([]dto.Sub
 		}
 
 		result = append(result, dto.SubscriptionResponse{
-			ID:           s.ID,
-			Name:         s.Name,
-			PhoneNumber:  s.PhoneNumber,
-			MealPlan:     mealPlanResp,
-			MealTypes:    strings.Split(s.MealTypes, ","),
-			DeliveryDays: strings.Split(s.DeliveryDays, ","),
-			Allergies:    s.Allergies,
-			TotalPrice:   s.TotalPrice,
-			Status:       string(s.Status),
-			StartDate:    s.StartDate,
-			EndDate:      s.EndDate,
+			ID:              s.ID,
+			Name:            s.Name,
+			PhoneNumber:     s.PhoneNumber,
+			DeliveryAddress: s.DeliveryAddress,
+			DeliveryNotes:   s.DeliveryNotes,
+			MealPlan:        mealPlanResp,
+			MealTypes:       strings.Split(s.MealTypes, ","),
+			DeliveryDays:    strings.Split(s.DeliveryDays, ","),
+			Allergies:       s.Allergies,
+			TotalPrice:      s.TotalPrice,
+			Status:          string(s.Status),
+			StartDate:       s.StartDate,
+			EndDate:         s.EndDate,
 		})
 	}
 
@@ -185,19 +189,21 @@ func (uc *SubscriptionUsecase) PauseSubscription(userID uuid.UUID, subscriptionI
 	}
 
 	return &dto.SubscriptionResponse{
-		ID:             sub.ID,
-		Name:           sub.Name,
-		PhoneNumber:    sub.PhoneNumber,
-		MealPlan:       mealPlanResp,
-		MealTypes:      strings.Split(sub.MealTypes, ","),
-		DeliveryDays:   strings.Split(sub.DeliveryDays, ","),
-		Allergies:      sub.Allergies,
-		TotalPrice:     sub.TotalPrice,
-		Status:         string(sub.Status),
-		PauseStartDate: sub.PauseStartDate,
-		PauseEndDate:   sub.PauseEndDate,
-		StartDate:      sub.StartDate,
-		EndDate:        sub.EndDate,
+		ID:              sub.ID,
+		Name:            sub.Name,
+		PhoneNumber:     sub.PhoneNumber,
+		DeliveryAddress: sub.DeliveryAddress,
+		DeliveryNotes:   sub.DeliveryNotes,
+		MealPlan:        mealPlanResp,
+		MealTypes:       strings.Split(sub.MealTypes, ","),
+		DeliveryDays:    strings.Split(sub.DeliveryDays, ","),
+		Allergies:       sub.Allergies,
+		TotalPrice:      sub.TotalPrice,
+		Status:          string(sub.Status),
+		PauseStartDate:  sub.PauseStartDate,
+		PauseEndDate:    sub.PauseEndDate,
+		StartDate:       sub.StartDate,
+		EndDate:         sub.EndDate,
 	}, nil
 }
 
@@ -230,17 +236,19 @@ func (uc *SubscriptionUsecase) CancelSubscription(userID uuid.UUID, subscription
 	}
 
 	return &dto.SubscriptionResponse{
-		ID:           sub.ID,
-		Name:         sub.Name,
-		PhoneNumber:  sub.PhoneNumber,
-		MealPlan:     mealPlanResp,
-		MealTypes:    strings.Split(sub.MealTypes, ","),
-		DeliveryDays: strings.Split(sub.DeliveryDays, ","),
-		Allergies:    sub.Allergies,
-		TotalPrice:   sub.TotalPrice,
-		Status:       string(sub.Status),
-		StartDate:    sub.StartDate,
-		EndDate:      sub.EndDate,
+		ID:              sub.ID,
+		Name:            sub.Name,
+		PhoneNumber:     sub.PhoneNumber,
+		DeliveryAddress: sub.DeliveryAddress,
+		DeliveryNotes:   sub.DeliveryNotes,
+		MealPlan:        mealPlanResp,
+		MealTypes:       strings.Split(sub.MealTypes, ","),
+		DeliveryDays:    strings.Split(sub.DeliveryDays, ","),
+		Allergies:       sub.Allergies,
+		TotalPrice:      sub.TotalPrice,
+		Status:          string(sub.Status),
+		StartDate:       sub.StartDate,
+		EndDate:         sub.EndDate,
 	}, nil
 }
 

@@ -1235,6 +1235,7 @@ const docTemplate = `{
         "github_com_Ablebil_sea-catering-be_internal_domain_dto.CreateSubscriptionRequest": {
             "type": "object",
             "required": [
+                "delivery_address",
                 "delivery_days",
                 "meal_plan_id",
                 "meal_types",
@@ -1245,6 +1246,11 @@ const docTemplate = `{
                 "allergies": {
                     "type": "string",
                     "example": "Peanuts, Shellfish"
+                },
+                "delivery_address": {
+                    "type": "string",
+                    "minLength": 10,
+                    "example": "123 Main St, Jakarta"
                 },
                 "delivery_days": {
                     "type": "array",
@@ -1257,6 +1263,10 @@ const docTemplate = `{
                         "tuesday",
                         "wednesday"
                     ]
+                },
+                "delivery_notes": {
+                    "type": "string",
+                    "example": "Please leave at the front door"
                 },
                 "meal_plan_id": {
                     "type": "string",
@@ -1421,6 +1431,9 @@ const docTemplate = `{
                     "type": "string",
                     "example": "2025-01-10"
                 },
+                "delivery_address": {
+                    "type": "string"
+                },
                 "delivery_days": {
                     "type": "array",
                     "items": {
@@ -1431,6 +1444,9 @@ const docTemplate = `{
                         "tuesday",
                         "wednesday"
                     ]
+                },
+                "delivery_notes": {
+                    "type": "string"
                 },
                 "end_date": {
                     "type": "string",

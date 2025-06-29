@@ -1229,6 +1229,7 @@
         "github_com_Ablebil_sea-catering-be_internal_domain_dto.CreateSubscriptionRequest": {
             "type": "object",
             "required": [
+                "delivery_address",
                 "delivery_days",
                 "meal_plan_id",
                 "meal_types",
@@ -1239,6 +1240,11 @@
                 "allergies": {
                     "type": "string",
                     "example": "Peanuts, Shellfish"
+                },
+                "delivery_address": {
+                    "type": "string",
+                    "minLength": 10,
+                    "example": "123 Main St, Jakarta"
                 },
                 "delivery_days": {
                     "type": "array",
@@ -1251,6 +1257,10 @@
                         "tuesday",
                         "wednesday"
                     ]
+                },
+                "delivery_notes": {
+                    "type": "string",
+                    "example": "Please leave at the front door"
                 },
                 "meal_plan_id": {
                     "type": "string",
@@ -1415,6 +1425,9 @@
                     "type": "string",
                     "example": "2025-01-10"
                 },
+                "delivery_address": {
+                    "type": "string"
+                },
                 "delivery_days": {
                     "type": "array",
                     "items": {
@@ -1425,6 +1438,9 @@
                         "tuesday",
                         "wednesday"
                     ]
+                },
+                "delivery_notes": {
+                    "type": "string"
                 },
                 "end_date": {
                     "type": "string",

@@ -7,12 +7,14 @@ import (
 )
 
 type CreateSubscriptionRequest struct {
-	Name         string    `json:"name" validate:"required,min=3,max=50" example:"John Doe"`
-	PhoneNumber  string    `json:"phone_number" validate:"required,min=10" example:"081234567890"`
-	MealPlanID   uuid.UUID `json:"meal_plan_id" validate:"required,uuid" example:"b3e1f8e2..."`
-	MealTypes    []string  `json:"meal_types" validate:"required,min=1" example:"breakfast,lunch"`
-	DeliveryDays []string  `json:"delivery_days" validate:"required,min=1" example:"monday,tuesday,wednesday"`
-	Allergies    *string   `json:"allergies" example:"Peanuts, Shellfish"`
+	Name            string    `json:"name" validate:"required,min=3,max=50" example:"John Doe"`
+	PhoneNumber     string    `json:"phone_number" validate:"required,min=10" example:"081234567890"`
+	DeliveryAddress string    `json:"delivery_address" validate:"required,min=10" example:"123 Main St, Jakarta"`
+	DeliveryNotes   *string   `json:"delivery_notes" example:"Please leave at the front door"`
+	MealPlanID      uuid.UUID `json:"meal_plan_id" validate:"required,uuid" example:"b3e1f8e2..."`
+	MealTypes       []string  `json:"meal_types" validate:"required,min=1" example:"breakfast,lunch"`
+	DeliveryDays    []string  `json:"delivery_days" validate:"required,min=1" example:"monday,tuesday,wednesday"`
+	Allergies       *string   `json:"allergies" example:"Peanuts, Shellfish"`
 }
 
 type PauseSubscriptionRequest struct {
@@ -47,20 +49,22 @@ type MidtransCustomerDetails struct {
 }
 
 type SubscriptionResponse struct {
-	ID             uuid.UUID        `json:"id" example:"b3e1f8e2..."`
-	Name           string           `json:"name" example:"John Doe"`
-	PhoneNumber    string           `json:"phone_number" example:"08123456789"`
-	MealPlan       MealPlanResponse `json:"meal_plan"`
-	MealTypes      []string         `json:"meal_types" example:"breakfast,lunch"`
-	DeliveryDays   []string         `json:"delivery_days" example:"monday,tuesday,wednesday"`
-	Allergies      *string          `json:"allergies" example:"Peanuts, Shellfish"`
-	TotalPrice     float64          `json:"total_price" example:"180000"`
-	Status         string           `json:"status" example:"pending"`
-	PauseStartDate *time.Time       `json:"pause_start_date" example:"2025-01-15"`
-	PauseEndDate   *time.Time       `json:"pause_end_date" example:"2025-01-30"`
-	StartDate      time.Time        `json:"start_date" example:"2025-01-10"`
-	EndDate        *time.Time       `json:"end_date" example:"2025-02-10"`
-	CreatedAt      time.Time        `json:"created_at" example:"2025-01-10"`
+	ID              uuid.UUID        `json:"id" example:"b3e1f8e2..."`
+	Name            string           `json:"name" example:"John Doe"`
+	PhoneNumber     string           `json:"phone_number" example:"08123456789"`
+	DeliveryAddress string           `json:"delivery_address"`
+	DeliveryNotes   *string          `json:"delivery_notes"`
+	MealPlan        MealPlanResponse `json:"meal_plan"`
+	MealTypes       []string         `json:"meal_types" example:"breakfast,lunch"`
+	DeliveryDays    []string         `json:"delivery_days" example:"monday,tuesday,wednesday"`
+	Allergies       *string          `json:"allergies" example:"Peanuts, Shellfish"`
+	TotalPrice      float64          `json:"total_price" example:"180000"`
+	Status          string           `json:"status" example:"pending"`
+	PauseStartDate  *time.Time       `json:"pause_start_date" example:"2025-01-15"`
+	PauseEndDate    *time.Time       `json:"pause_end_date" example:"2025-01-30"`
+	StartDate       time.Time        `json:"start_date" example:"2025-01-10"`
+	EndDate         *time.Time       `json:"end_date" example:"2025-02-10"`
+	CreatedAt       time.Time        `json:"created_at" example:"2025-01-10"`
 }
 
 type PaymentResponse struct {
