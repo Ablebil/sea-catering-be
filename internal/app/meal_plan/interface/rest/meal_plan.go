@@ -67,6 +67,16 @@ func (h MealPlanHandler) GetMealPlanByID(ctx *fiber.Ctx) error {
 	return res.OK(ctx, mealPlan, res.GetMealPlanByIDSuccess)
 }
 
+// @Summary      Create Meal Plan
+// @Description  Create a new meal plan.
+// @Tags         MealPlan
+// @Accept       json
+// @Produce      json
+// @Param        payload body dto.CreateMealPlanRequest true "Create Meal Plan Request"
+// @Success      201  {object}  res.Res "Meal plan created successfully"
+// @Failure      400  {object}  res.Err "Invalid request body or validation error"
+// @Failure      500  {object}  res.Err "Internal Server Error"
+// @Router       /meal-plans/ [post]
 func (h MealPlanHandler) CreateMealPlan(ctx *fiber.Ctx) error {
 	req := new(dto.CreateMealPlanRequest)
 	if err := ctx.BodyParser(req); err != nil {

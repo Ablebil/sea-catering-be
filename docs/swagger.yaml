@@ -1,5 +1,27 @@
 basePath: /api/v1
 definitions:
+  github_com_Ablebil_sea-catering-be_internal_domain_dto.CreateMealPlanRequest:
+    properties:
+      description:
+        example: A healthy meal plan
+        type: string
+      name:
+        example: Diet Plan
+        maxLength: 255
+        minLength: 3
+        type: string
+      photo_url:
+        example: https://...
+        type: string
+      price:
+        example: 30000
+        type: number
+    required:
+    - description
+    - name
+    - photo_url
+    - price
+    type: object
   github_com_Ablebil_sea-catering-be_internal_domain_dto.CreateSubscriptionRequest:
     properties:
       allergies:
@@ -82,7 +104,7 @@ definitions:
         example: b3e1f8e2...
         type: string
       name:
-        example: John Doe
+        example: Diet Plan
         type: string
       photo_url:
         example: https://...
@@ -522,6 +544,35 @@ paths:
           schema:
             $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
       summary: Get All Meal Plans
+      tags:
+      - MealPlan
+    post:
+      consumes:
+      - application/json
+      description: Create a new meal plan.
+      parameters:
+      - description: Create Meal Plan Request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.CreateMealPlanRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Meal plan created successfully
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+        "400":
+          description: Invalid request body or validation error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      summary: Create Meal Plan
       tags:
       - MealPlan
   /meal-plans/{id}:

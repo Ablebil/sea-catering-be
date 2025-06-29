@@ -424,6 +424,50 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "Create a new meal plan.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "MealPlan"
+                ],
+                "summary": "Create Meal Plan",
+                "parameters": [
+                    {
+                        "description": "Create Meal Plan Request",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_domain_dto.CreateMealPlanRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Meal plan created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body or validation error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    }
+                }
             }
         },
         "/meal-plans/{id}": {
@@ -1314,6 +1358,35 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_Ablebil_sea-catering-be_internal_domain_dto.CreateMealPlanRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "name",
+                "photo_url",
+                "price"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "A healthy meal plan"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 3,
+                    "example": "Diet Plan"
+                },
+                "photo_url": {
+                    "type": "string",
+                    "example": "https://..."
+                },
+                "price": {
+                    "type": "number",
+                    "example": 30000
+                }
+            }
+        },
         "github_com_Ablebil_sea-catering-be_internal_domain_dto.CreateSubscriptionRequest": {
             "type": "object",
             "required": [
@@ -1425,7 +1498,7 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string",
-                    "example": "John Doe"
+                    "example": "Diet Plan"
                 },
                 "photo_url": {
                     "type": "string",
