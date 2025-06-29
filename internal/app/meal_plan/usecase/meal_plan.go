@@ -1,8 +1,12 @@
 package usecase
 
 import (
+	"fmt"
+	"time"
+
 	mealPlanRepository "github.com/Ablebil/sea-catering-be/internal/app/meal_plan/repository"
 	"github.com/Ablebil/sea-catering-be/internal/domain/dto"
+	"github.com/Ablebil/sea-catering-be/internal/infra/redis"
 	res "github.com/Ablebil/sea-catering-be/internal/infra/response"
 	"github.com/google/uuid"
 )
@@ -14,15 +18,24 @@ type MealPlanUsecaseItf interface {
 
 type MealPlanUsecase struct {
 	MealPlanRepository mealPlanRepository.MealPlanRepositoryItf
+	redis              redis.RedisItf
 }
 
-func NewMealPlanUsecase(mealPlanRepository mealPlanRepository.MealPlanRepositoryItf) MealPlanUsecaseItf {
+func NewMealPlanUsecase(mealPlanRepository mealPlanRepository.MealPlanRepositoryItf, redis redis.RedisItf) MealPlanUsecaseItf {
 	return &MealPlanUsecase{
 		MealPlanRepository: mealPlanRepository,
+		redis:              redis,
 	}
 }
 
 func (uc *MealPlanUsecase) GetAllMealPlans() ([]dto.MealPlanResponse, *res.Err) {
+	cacheKey := "meal_plans:all"
+	var cachedMealPlans []dto.MealPlanResponse
+
+	if err := uc.redis.GetCache(cacheKey, &cachedMealPlans); err == nil {
+		return cachedMealPlans, nil
+	}
+
 	mealPlans, err := uc.MealPlanRepository.GetAllMealPlans()
 	if err != nil {
 		return nil, res.ErrInternalServerError(res.FailedGetAllMealPlans)
@@ -39,10 +52,19 @@ func (uc *MealPlanUsecase) GetAllMealPlans() ([]dto.MealPlanResponse, *res.Err) 
 		})
 	}
 
+	uc.redis.SetCache(cacheKey, result, 1*time.Hour)
+
 	return result, nil
 }
 
 func (uc *MealPlanUsecase) GetMealPlanByID(id uuid.UUID) (*dto.MealPlanResponse, *res.Err) {
+	cacheKey := fmt.Sprintf("meal_plan:%s", id.String())
+	var cachedMealPlan dto.MealPlanResponse
+
+	if err := uc.redis.GetCache(cacheKey, &cachedMealPlan); err == nil {
+		return &cachedMealPlan, nil
+	}
+
 	mealPlan, err := uc.MealPlanRepository.GetMealPlanByID(id)
 	if err != nil {
 		return nil, res.ErrInternalServerError(res.FailedGetMealPlanByID)
@@ -59,6 +81,8 @@ func (uc *MealPlanUsecase) GetMealPlanByID(id uuid.UUID) (*dto.MealPlanResponse,
 		Price:       mealPlan.Price,
 		PhotoURL:    mealPlan.PhotoURL,
 	}
+
+	uc.redis.SetCache(cacheKey, result, 1*time.Hour)
 
 	return result, nil
 }

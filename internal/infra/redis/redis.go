@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"encoding/json"
 	"time"
 
 	conf "github.com/Ablebil/sea-catering-be/config"
@@ -8,6 +9,9 @@ import (
 )
 
 type RedisItf interface {
+	SetCache(key string, data interface{}, exp time.Duration) error
+	GetCache(key string, data interface{}) error
+	DeleteCache(key string) error
 	SetOTP(email string, otp string, exp time.Duration) error
 	GetOTP(email string) (string, error)
 	DeleteOTP(email string) error
@@ -28,6 +32,28 @@ func NewRedis(conf *conf.Config) RedisItf {
 			Password: conf.RedisPassword,
 		}),
 	}
+}
+
+func (r *Redis) SetCache(key string, data interface{}, exp time.Duration) error {
+	bytes, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	return r.store.Set(key, bytes, exp)
+}
+
+func (r *Redis) GetCache(key string, data interface{}) error {
+	val, err := r.store.Get(key)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(val, data)
+}
+
+func (r *Redis) DeleteCache(key string) error {
+	return r.store.Delete(key)
 }
 
 func (r *Redis) SetOTP(email string, otp string, exp time.Duration) error {

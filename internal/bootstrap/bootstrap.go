@@ -94,7 +94,7 @@ func Start() error {
 
 	// Meal Plan Domain
 	mealPlanRepository := MealPlanRepository.NewMealPlanRepository(db)
-	mealPlanUsecase := MealPlanUsecase.NewMealPlanUsecase(mealPlanRepository)
+	mealPlanUsecase := MealPlanUsecase.NewMealPlanUsecase(mealPlanRepository, redis)
 	MealPlanHandler.NewMealPlanHandler(v1, mealPlanUsecase)
 
 	// Subscription Domain
