@@ -51,9 +51,11 @@ const (
 
 	FailedGetAllMealPlans = "Failed to get all meal plans"
 	FailedGetMealPlanByID = "Failed to get meal plan by ID"
+	FailedCreateMealPlan  = "Failed to create meal plan"
 
 	GetAllMealPlansSuccess = "Get all meal plans successful"
 	GetMealPlanByIDSuccess = "Get meal plan by ID successful"
+	CreateMealPlanSuccess  = "Create meal plan successful"
 )
 
 // Subscription Domain

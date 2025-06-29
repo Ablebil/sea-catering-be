@@ -6,6 +6,7 @@ import (
 
 	mealPlanRepository "github.com/Ablebil/sea-catering-be/internal/app/meal_plan/repository"
 	"github.com/Ablebil/sea-catering-be/internal/domain/dto"
+	"github.com/Ablebil/sea-catering-be/internal/domain/entity"
 	"github.com/Ablebil/sea-catering-be/internal/infra/redis"
 	res "github.com/Ablebil/sea-catering-be/internal/infra/response"
 	"github.com/google/uuid"
@@ -14,6 +15,7 @@ import (
 type MealPlanUsecaseItf interface {
 	GetAllMealPlans() ([]dto.MealPlanResponse, *res.Err)
 	GetMealPlanByID(id uuid.UUID) (*dto.MealPlanResponse, *res.Err)
+	CreateMealPlan(req dto.CreateMealPlanRequest) *res.Err
 }
 
 type MealPlanUsecase struct {
@@ -85,4 +87,23 @@ func (uc *MealPlanUsecase) GetMealPlanByID(id uuid.UUID) (*dto.MealPlanResponse,
 	uc.redis.SetCache(cacheKey, result, 1*time.Hour)
 
 	return result, nil
+}
+
+func (uc *MealPlanUsecase) CreateMealPlan(req dto.CreateMealPlanRequest) *res.Err {
+	newMealPlan := &entity.MealPlan{
+		Name:        req.Name,
+		Description: req.Description,
+		Price:       req.Price,
+		PhotoURL:    req.PhotoURL,
+	}
+
+	err := uc.MealPlanRepository.CreateMealPlan(newMealPlan)
+	if err != nil {
+		return res.ErrInternalServerError(res.FailedCreateMealPlan)
+	}
+
+	cacheKey := "meal_plans:all"
+	uc.redis.DeleteCache(cacheKey)
+
+	return nil
 }

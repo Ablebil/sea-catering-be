@@ -11,6 +11,7 @@ import (
 type MealPlanRepositoryItf interface {
 	GetAllMealPlans() ([]entity.MealPlan, error)
 	GetMealPlanByID(id uuid.UUID) (*entity.MealPlan, error)
+	CreateMealPlan(mealPlan *entity.MealPlan) error
 }
 
 type MealPlanRepository struct {
@@ -42,4 +43,8 @@ func (r *MealPlanRepository) GetMealPlanByID(id uuid.UUID) (*entity.MealPlan, er
 	}
 
 	return &mealPlan, nil
+}
+
+func (r *MealPlanRepository) CreateMealPlan(mealPlan *entity.MealPlan) error {
+	return r.db.Create(mealPlan).Error
 }
