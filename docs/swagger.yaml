@@ -872,6 +872,57 @@ paths:
       summary: Get New Subscriptions Stats
       tags:
       - Subscription
+  /subscriptions/admin/stats/reactivations:
+    get:
+      description: Get number of subscriptions that were reactivated in a date range
+        (admin only).
+      parameters:
+      - description: Start date (YYYY-MM-DD)
+        in: query
+        name: start_date
+        required: true
+        type: string
+      - description: End date (YYYY-MM-DD)
+        in: query
+        name: end_date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get reactivation stats success
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  properties:
+                    count:
+                      type: integer
+                  type: object
+              type: object
+        "400":
+          description: Invalid request params
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "401":
+          description: Missing or invalid access token
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "403":
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Reactivation Stats
+      tags:
+      - Subscription
   /subscriptions/webhook/midtrans:
     post:
       consumes:

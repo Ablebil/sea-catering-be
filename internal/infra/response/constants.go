@@ -71,6 +71,7 @@ const (
 	FailedGetNewSubscriptionsCount    = "Failed to get new subscriptions count"
 	FailedCalculateMMR                = "Failed to calculate MMR"
 	FailedGetTotalActiveSubscriptions = "Failed to get total active subscriptions"
+	FailedGetReactivationStats        = "Failed to get reactivation stats"
 
 	CreateSubscriptionSuccess          = "Subscription created successful"
 	GetAllSubscriptionsSuccess         = "Get all subscriptions successful"
@@ -79,6 +80,7 @@ const (
 	GetNewSubscriptionsStatsSuccess    = "Get new subscriptions stats success"
 	GetMRRStatsSuccess                 = "Get MRR stats success"
 	GetTotalActiveSubscriptionsSuccess = "Get total active subscriptions success"
+	GetReactivationStatsSuccess        = "Get reactivation stats success"
 	WebhookProcessedSuccess            = "Webhook processed successful"
 )
 

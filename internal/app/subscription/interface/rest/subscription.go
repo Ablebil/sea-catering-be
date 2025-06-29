@@ -31,6 +31,7 @@ func NewSubscriptionHandler(routerGroup fiber.Router, validator *validator.Valid
 	adminRouterGroup.Get("/stats/new", subscriptionHandler.GetNewSubscriptionsStats)
 	adminRouterGroup.Get("/stats/mrr", subscriptionHandler.GetMRRStats)
 	adminRouterGroup.Get("/stats/active-total", subscriptionHandler.GetTotalActiveSubscriptions)
+	adminRouterGroup.Get("/stats/reactivations", subscriptionHandler.GetReactivationStats)
 
 	routerGroup.Post("/webhook/midtrans", subscriptionHandler.HandleMidtransWebhook)
 }
@@ -257,6 +258,42 @@ func (h SubscriptionHandler) GetTotalActiveSubscriptions(ctx *fiber.Ctx) error {
 	}
 
 	return res.OK(ctx, fiber.Map{"count": count}, res.GetTotalActiveSubscriptionsSuccess)
+}
+
+// @Summary      Get Reactivation Stats
+// @Description  Get number of subscriptions that were reactivated in a date range (admin only).
+// @Tags         Subscription
+// @Produce      json
+// @Param        start_date query string true "Start date (YYYY-MM-DD)"
+// @Param        end_date   query string true "End date (YYYY-MM-DD)"
+// @Success      200  {object}  res.Res{payload=object{count=int64}} "Get reactivation stats success"
+// @Failure      400  {object}  res.Err "Invalid request params"
+// @Failure      401  {object}  res.Err "Missing or invalid access token"
+// @Failure      403  {object}  res.Err "Admin access required"
+// @Failure      500  {object}  res.Err "Internal Server Error"
+// @Security     ApiKeyAuth
+// @Router       /subscriptions/admin/stats/reactivations [get]
+func (h SubscriptionHandler) GetReactivationStats(ctx *fiber.Ctx) error {
+	req := new(dto.GetSubscriptionStatisticRequest)
+	if err := ctx.QueryParser(req); err != nil {
+		return res.ErrBadRequest(res.FailedParsingRequestParams)
+	}
+
+	if err := h.Validator.Struct(req); err != nil {
+		validationErrors, ok := err.(validator.ValidationErrors)
+		if !ok {
+			return res.ErrInternalServerError(res.FailedValidateRequest)
+		}
+
+		return res.ErrValidation(validationErrors)
+	}
+
+	count, err := h.SubscriptionUsecase.GetReactivationStats(*req)
+	if err != nil {
+		return err
+	}
+
+	return res.OK(ctx, fiber.Map{"count": count}, res.GetReactivationStatsSuccess)
 }
 
 // @Summary      Handle Midtrans Webhook

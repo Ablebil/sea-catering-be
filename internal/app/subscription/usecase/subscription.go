@@ -23,6 +23,7 @@ type SubscriptionUsecaseItf interface {
 	GetNewSusbcriptionsCount(req dto.GetSubscriptionStatisticRequest) (int64, *res.Err)
 	GetMRR(req dto.GetSubscriptionStatisticRequest) (float64, *res.Err)
 	GetTotalActiveSubscriptions() (int64, *res.Err)
+	GetReactivationStats(req dto.GetSubscriptionStatisticRequest) (int64, *res.Err)
 	HandlePaymentNotification(notification map[string]interface{}) *res.Err
 	UpdateExpiredSubscriptions() *res.Err
 }
@@ -163,7 +164,6 @@ func (uc *SubscriptionUsecase) PauseSubscription(userID uuid.UUID, subscriptionI
 
 	sub.PauseStartDate = &startDate
 	sub.PauseEndDate = &endDate
-	sub.Status = entity.StatusPaused
 
 	pauseDuration := endDate.Sub(startDate)
 	if sub.EndDate != nil {
@@ -171,7 +171,7 @@ func (uc *SubscriptionUsecase) PauseSubscription(userID uuid.UUID, subscriptionI
 		sub.EndDate = &newEndDate
 	}
 
-	if err := uc.SubscriptionRepository.UpdateSubscription(sub); err != nil {
+	if err := uc.SubscriptionRepository.UpdateStatus(sub, entity.StatusPaused); err != nil {
 		return nil, res.ErrInternalServerError(res.FailedPauseSubscription)
 	}
 
@@ -217,8 +217,7 @@ func (uc *SubscriptionUsecase) CancelSubscription(userID uuid.UUID, subscription
 		return nil, res.ErrNotFound(res.SubscriptionNotFound)
 	}
 
-	sub.Status = entity.StatusCancelled
-	if err := uc.SubscriptionRepository.UpdateSubscription(sub); err != nil {
+	if err := uc.SubscriptionRepository.UpdateStatus(sub, entity.StatusCancelled); err != nil {
 		return nil, res.ErrInternalServerError(res.FailedCancelSubscription)
 	}
 
@@ -289,6 +288,20 @@ func (uc *SubscriptionUsecase) GetTotalActiveSubscriptions() (int64, *res.Err) {
 	return count, nil
 }
 
+func (uc *SubscriptionUsecase) GetReactivationStats(req dto.GetSubscriptionStatisticRequest) (int64, *res.Err) {
+	start, end, err := uc.helper.ParseDateRange(req.StartDate, req.EndDate)
+	if err != nil {
+		return 0, err
+	}
+
+	count, repoErr := uc.SubscriptionRepository.CountReactivationsImage(start, end)
+	if repoErr != nil {
+		return 0, res.ErrInternalServerError(res.FailedGetReactivationStats)
+	}
+
+	return count, nil
+}
+
 func (uc *SubscriptionUsecase) HandlePaymentNotification(notification map[string]interface{}) *res.Err {
 	orderID, ok := notification["order_id"].(string)
 	if !ok {
@@ -321,8 +334,7 @@ func (uc *SubscriptionUsecase) HandlePaymentNotification(notification map[string
 		return nil
 	}
 
-	subscription.Status = newStatus
-	if err := uc.SubscriptionRepository.UpdateSubscription(subscription); err != nil {
+	if err := uc.SubscriptionRepository.UpdateStatus(subscription, newStatus); err != nil {
 		return res.ErrInternalServerError(res.FailedUpdateSubscription)
 	}
 
@@ -336,8 +348,7 @@ func (uc *SubscriptionUsecase) UpdateExpiredSubscriptions() *res.Err {
 	}
 
 	for _, sub := range expiredSubs {
-		sub.Status = entity.StatusFinished
-		if err := uc.SubscriptionRepository.UpdateSubscription(&sub); err != nil {
+		if err := uc.SubscriptionRepository.UpdateStatus(&sub, entity.StatusFinished); err != nil {
 			continue
 		}
 	}

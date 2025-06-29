@@ -11,15 +11,16 @@ import (
 
 type SubscriptionRepositoryItf interface {
 	CreateSubscription(subscription *entity.Subscription) error
-	UpdateSubscription(subscription *entity.Subscription) error
+	UpdateStatus(subscription *entity.Subscription, newStatus entity.SubscriptionStatus) error
 	GetAllSubscriptionByUserID(userID uuid.UUID) ([]entity.Subscription, error)
 	GetSubscriptionByID(id uuid.UUID) (*entity.Subscription, error)
-	GetSubscriptionByIDAndUserID(id, userID uuid.UUID) (*entity.Subscription, error)
+	GetSubscriptionByIDAndUserID(id uuid.UUID, userID uuid.UUID) (*entity.Subscription, error)
 	GetSubscriptionByOrderID(orderID string) (*entity.Subscription, error)
 	GetExpiredActiveSubscriptions() ([]entity.Subscription, error)
-	CountNewInRange(start, end time.Time) (int64, error)
-	CalculateMRRInRange(start, end time.Time) (float64, error)
+	CountNewInRange(start time.Time, end time.Time) (int64, error)
+	CalculateMRRInRange(start time.Time, end time.Time) (float64, error)
 	CountTotalActive() (int64, error)
+	CountReactivationsImage(start time.Time, end time.Time) (int64, error)
 }
 
 type SubscriptionRepository struct {
@@ -36,8 +37,27 @@ func (r *SubscriptionRepository) CreateSubscription(subscription *entity.Subscri
 	return r.db.Create(subscription).Error
 }
 
-func (r *SubscriptionRepository) UpdateSubscription(subscription *entity.Subscription) error {
-	return r.db.Save(subscription).Error
+func (r *SubscriptionRepository) UpdateStatus(subscription *entity.Subscription, newStatus entity.SubscriptionStatus) error {
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		oldStatus := subscription.Status
+
+		statusLog := &entity.SubscriptionStatusLog{
+			SubscriptionID: subscription.ID,
+			OldStatus:      oldStatus,
+			NewStatus:      newStatus,
+		}
+
+		if err := tx.Create(statusLog).Error; err != nil {
+			return err
+		}
+
+		subscription.Status = newStatus
+		if err := tx.Save(subscription).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
 }
 
 func (r *SubscriptionRepository) GetAllSubscriptionByUserID(userID uuid.UUID) ([]entity.Subscription, error) {
@@ -120,6 +140,14 @@ func (r *SubscriptionRepository) CountTotalActive() (int64, error) {
 	var count int64
 	err := r.db.Model(&entity.Subscription{}).
 		Where("status = ?", entity.StatusActive).
+		Count(&count).Error
+	return count, err
+}
+
+func (r *SubscriptionRepository) CountReactivationsImage(start time.Time, end time.Time) (int64, error) {
+	var count int64
+	err := r.db.Model(&entity.SubscriptionStatusLog{}).
+		Where("new_status = ? AND (old_status = ? OR old_status = ?) AND changed_at BETWEEN ? AND ?", entity.StatusActive, entity.StatusCancelled, entity.StatusFinished, start, end).
 		Count(&count).Error
 	return count, err
 }
