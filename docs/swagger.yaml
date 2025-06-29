@@ -725,6 +725,141 @@ paths:
       summary: Pause Subscription
       tags:
       - Subscription
+  /subscriptions/admin/stats/active-total:
+    get:
+      description: Get total number of active subscriptions (admin only).
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get total active subscriptions success
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  properties:
+                    count:
+                      type: integer
+                  type: object
+              type: object
+        "401":
+          description: Missing or invalid access token
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "403":
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Total Active Subscriptions
+      tags:
+      - Subscription
+  /subscriptions/admin/stats/mrr:
+    get:
+      description: Get Monthly Recurring Revenue (MRR) in a date range (admin only).
+      parameters:
+      - description: Start date (YYYY-MM-DD)
+        in: query
+        name: start_date
+        required: true
+        type: string
+      - description: End date (YYYY-MM-DD)
+        in: query
+        name: end_date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get MRR stats success
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  properties:
+                    mrr:
+                      type: number
+                  type: object
+              type: object
+        "400":
+          description: Invalid request params
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "401":
+          description: Missing or invalid access token
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "403":
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      security:
+      - ApiKeyAuth: []
+      summary: Get MRR Stats
+      tags:
+      - Subscription
+  /subscriptions/admin/stats/new:
+    get:
+      description: Get total number of new subscriptions in a date range (admin only).
+      parameters:
+      - description: Start date (YYYY-MM-DD)
+        in: query
+        name: start_date
+        required: true
+        type: string
+      - description: End date (YYYY-MM-DD)
+        in: query
+        name: end_date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get new subscriptions stats success
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res'
+            - properties:
+                payload:
+                  properties:
+                    count:
+                      type: integer
+                  type: object
+              type: object
+        "400":
+          description: Invalid request params
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "401":
+          description: Missing or invalid access token
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "403":
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err'
+      security:
+      - ApiKeyAuth: []
+      summary: Get New Subscriptions Stats
+      tags:
+      - Subscription
   /subscriptions/webhook/midtrans:
     post:
       consumes:

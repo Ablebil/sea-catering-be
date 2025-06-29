@@ -168,6 +168,19 @@ func (h SubscriptionHandler) CancelSubscription(ctx *fiber.Ctx) error {
 	return res.OK(ctx, cancelledSub, res.CancelSubscriptionSuccess)
 }
 
+// @Summary      Get New Subscriptions Stats
+// @Description  Get total number of new subscriptions in a date range (admin only).
+// @Tags         Subscription
+// @Produce      json
+// @Param        start_date query string true "Start date (YYYY-MM-DD)"
+// @Param        end_date   query string true "End date (YYYY-MM-DD)"
+// @Success      200  {object}  res.Res{payload=object{count=int64}} "Get new subscriptions stats success"
+// @Failure      400  {object}  res.Err "Invalid request params"
+// @Failure      401  {object}  res.Err "Missing or invalid access token"
+// @Failure      403  {object}  res.Err "Admin access required"
+// @Failure      500  {object}  res.Err "Internal Server Error"
+// @Security     ApiKeyAuth
+// @Router       /subscriptions/admin/stats/new [get]
 func (h SubscriptionHandler) GetNewSubscriptionsStats(ctx *fiber.Ctx) error {
 	req := new(dto.GetSubscriptionStatisticRequest)
 	if err := ctx.QueryParser(req); err != nil {
@@ -191,6 +204,19 @@ func (h SubscriptionHandler) GetNewSubscriptionsStats(ctx *fiber.Ctx) error {
 	return res.OK(ctx, fiber.Map{"count": count}, res.GetNewSubscriptionsStatsSuccess)
 }
 
+// @Summary      Get MRR Stats
+// @Description  Get Monthly Recurring Revenue (MRR) in a date range (admin only).
+// @Tags         Subscription
+// @Produce      json
+// @Param        start_date query string true "Start date (YYYY-MM-DD)"
+// @Param        end_date   query string true "End date (YYYY-MM-DD)"
+// @Success      200  {object}  res.Res{payload=object{mrr=float64}} "Get MRR stats success"
+// @Failure      400  {object}  res.Err "Invalid request params"
+// @Failure      401  {object}  res.Err "Missing or invalid access token"
+// @Failure      403  {object}  res.Err "Admin access required"
+// @Failure      500  {object}  res.Err "Internal Server Error"
+// @Security     ApiKeyAuth
+// @Router       /subscriptions/admin/stats/mrr [get]
 func (h SubscriptionHandler) GetMRRStats(ctx *fiber.Ctx) error {
 	req := new(dto.GetSubscriptionStatisticRequest)
 	if err := ctx.QueryParser(req); err != nil {
@@ -214,6 +240,16 @@ func (h SubscriptionHandler) GetMRRStats(ctx *fiber.Ctx) error {
 	return res.OK(ctx, fiber.Map{"mrr": mrr}, res.GetMRRStatsSuccess)
 }
 
+// @Summary      Get Total Active Subscriptions
+// @Description  Get total number of active subscriptions (admin only).
+// @Tags         Subscription
+// @Produce      json
+// @Success      200  {object}  res.Res{payload=object{count=int64}} "Get total active subscriptions success"
+// @Failure      401  {object}  res.Err "Missing or invalid access token"
+// @Failure      403  {object}  res.Err "Admin access required"
+// @Failure      500  {object}  res.Err "Internal Server Error"
+// @Security     ApiKeyAuth
+// @Router       /subscriptions/admin/stats/active-total [get]
 func (h SubscriptionHandler) GetTotalActiveSubscriptions(ctx *fiber.Ctx) error {
 	count, err := h.SubscriptionUsecase.GetTotalActiveSubscriptions()
 	if err != nil {

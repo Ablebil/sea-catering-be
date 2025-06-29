@@ -604,6 +604,230 @@
                 }
             }
         },
+        "/subscriptions/admin/stats/active-total": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get total number of active subscriptions (admin only).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Get Total Active Subscriptions",
+                "responses": {
+                    "200": {
+                        "description": "Get total active subscriptions success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "payload": {
+                                            "type": "object",
+                                            "properties": {
+                                                "count": {
+                                                    "type": "integer"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid access token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "403": {
+                        "description": "Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/subscriptions/admin/stats/mrr": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get Monthly Recurring Revenue (MRR) in a date range (admin only).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Get MRR Stats",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Start date (YYYY-MM-DD)",
+                        "name": "start_date",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "End date (YYYY-MM-DD)",
+                        "name": "end_date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get MRR stats success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "payload": {
+                                            "type": "object",
+                                            "properties": {
+                                                "mrr": {
+                                                    "type": "number"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request params",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid access token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "403": {
+                        "description": "Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/subscriptions/admin/stats/new": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get total number of new subscriptions in a date range (admin only).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Get New Subscriptions Stats",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Start date (YYYY-MM-DD)",
+                        "name": "start_date",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "End date (YYYY-MM-DD)",
+                        "name": "end_date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get new subscriptions stats success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Res"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "payload": {
+                                            "type": "object",
+                                            "properties": {
+                                                "count": {
+                                                    "type": "integer"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request params",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid access token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "403": {
+                        "description": "Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ablebil_sea-catering-be_internal_infra_response.Err"
+                        }
+                    }
+                }
+            }
+        },
         "/subscriptions/webhook/midtrans": {
             "post": {
                 "description": "Handle payment notification from Midtrans payment gateway. This endpoint is called by Midtrans to notify payment status changes.",
