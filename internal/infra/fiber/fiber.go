@@ -12,13 +12,12 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/wI2L/jettison"
 )
 
 func New(conf *conf.Config) *fiber.App {
 	app := fiber.New(fiber.Config{
 		IdleTimeout: 5 * time.Second,
-		JSONEncoder: jettison.Marshal,
+		JSONEncoder: gojson.Marshal,
 		JSONDecoder: gojson.Unmarshal,
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
 			if customErr, ok := err.(*res.Err); ok {

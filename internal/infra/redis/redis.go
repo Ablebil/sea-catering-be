@@ -1,10 +1,10 @@
 package redis
 
 import (
-	"encoding/json"
 	"time"
 
 	conf "github.com/Ablebil/sea-catering-be/config"
+	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/storage/redis"
 )
 
@@ -35,7 +35,7 @@ func NewRedis(conf *conf.Config) RedisItf {
 }
 
 func (r *Redis) SetCache(key string, data interface{}, exp time.Duration) error {
-	bytes, err := json.Marshal(data)
+	bytes, err := gojson.Marshal(data)
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func (r *Redis) GetCache(key string, data interface{}) error {
 		return err
 	}
 
-	return json.Unmarshal(val, data)
+	return gojson.Unmarshal(val, data)
 }
 
 func (r *Redis) DeleteCache(key string) error {
