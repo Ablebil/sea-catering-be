@@ -7,6 +7,7 @@ import (
 	res "github.com/Ablebil/sea-catering-be/internal/infra/response"
 	"github.com/Ablebil/sea-catering-be/internal/middleware"
 	"github.com/Ablebil/sea-catering-be/internal/pkg/helper"
+	"github.com/Ablebil/sea-catering-be/internal/pkg/limiter"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -29,7 +30,7 @@ func NewTestimonialHandler(routerGroup fiber.Router, validator *validator.Valida
 
 	routerGroup = routerGroup.Group("/testimonials")
 	routerGroup.Get("/", testimonialHandler.GetAllTestimonials)
-	routerGroup.Post("/", middleware.Authentication, testimonialHandler.CreateTestimonial)
+	routerGroup.Post("/", middleware.Authentication, limiter.Testimonial(), testimonialHandler.CreateTestimonial)
 }
 
 // @Summary      Get All Testimonials

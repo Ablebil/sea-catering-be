@@ -8,6 +8,7 @@ import (
 	"github.com/Ablebil/sea-catering-be/internal/app/auth/usecase"
 	"github.com/Ablebil/sea-catering-be/internal/domain/dto"
 	res "github.com/Ablebil/sea-catering-be/internal/infra/response"
+	"github.com/Ablebil/sea-catering-be/internal/pkg/limiter"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
@@ -26,9 +27,9 @@ func NewAuthHandler(routerGroup fiber.Router, validator *validator.Validate, aut
 	}
 
 	routerGroup = routerGroup.Group("/auth")
-	routerGroup.Post("/register", authHandler.Register)
-	routerGroup.Post("/verify-otp", authHandler.VerifyOTP)
-	routerGroup.Post("/login", authHandler.Login)
+	routerGroup.Post("/register", limiter.Register(), authHandler.Register)
+	routerGroup.Post("/verify-otp", limiter.VerifyOTP(), authHandler.VerifyOTP)
+	routerGroup.Post("/login", limiter.Login(), authHandler.Login)
 	routerGroup.Get("/google", authHandler.GoogleLogin)
 	routerGroup.Get("/google/callback", authHandler.GoogleCallback)
 	routerGroup.Post("/refresh-token", authHandler.RefreshToken)

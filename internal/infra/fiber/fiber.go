@@ -5,6 +5,7 @@ import (
 
 	conf "github.com/Ablebil/sea-catering-be/config"
 	res "github.com/Ablebil/sea-catering-be/internal/infra/response"
+	"github.com/Ablebil/sea-catering-be/internal/pkg/limiter"
 	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
@@ -45,6 +46,8 @@ func New(conf *conf.Config) *fiber.App {
 	}))
 
 	app.Use(compress.New())
+
+	app.Use(limiter.Global())
 
 	return app
 }

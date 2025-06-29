@@ -5,6 +5,7 @@ import (
 	"github.com/Ablebil/sea-catering-be/internal/domain/dto"
 	res "github.com/Ablebil/sea-catering-be/internal/infra/response"
 	"github.com/Ablebil/sea-catering-be/internal/middleware"
+	"github.com/Ablebil/sea-catering-be/internal/pkg/limiter"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -22,7 +23,7 @@ func NewSubscriptionHandler(routerGroup fiber.Router, validator *validator.Valid
 	}
 
 	routerGroup = routerGroup.Group("/subscriptions")
-	routerGroup.Post("/", middleware.Authentication, subscriptionHandler.CreateSubscription)
+	routerGroup.Post("/", limiter.Subscription(), middleware.Authentication, subscriptionHandler.CreateSubscription)
 	routerGroup.Get("/", middleware.Authentication, subscriptionHandler.GetUserSubscriptions)
 	routerGroup.Put("/:id/pause", middleware.Authentication, subscriptionHandler.PauseSubscription)
 	routerGroup.Delete("/:id", middleware.Authentication, subscriptionHandler.CancelSubscription)
