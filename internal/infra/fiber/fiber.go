@@ -13,6 +13,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
 )
 
 func New(conf *conf.Config) *fiber.App {
@@ -31,12 +33,14 @@ func New(conf *conf.Config) *fiber.App {
 		},
 	})
 
+	app.Use(recover.New())
+	app.Use(requestid.New())
+
 	app.Use(logger.New(logger.Config{
 		Format: "${time} | ${status} | ${method} | ${path} | ${latency}\n",
 	}))
 
 	app.Use(helmet.New())
-
 	app.Use(healthcheck.New())
 
 	app.Use(cors.New(cors.Config{
@@ -45,8 +49,7 @@ func New(conf *conf.Config) *fiber.App {
 		AllowHeaders: "Content-Type, Authorization",
 	}))
 
-	app.Use(compress.New())
-
+	app.Use(compress.New(compress.Config{Level: compress.LevelBestSpeed}))
 	app.Use(limiter.Global())
 
 	return app
