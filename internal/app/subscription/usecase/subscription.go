@@ -11,6 +11,7 @@ import (
 	"github.com/Ablebil/sea-catering-be/internal/domain/entity"
 	"github.com/Ablebil/sea-catering-be/internal/infra/midtrans"
 	res "github.com/Ablebil/sea-catering-be/internal/infra/response"
+	"github.com/Ablebil/sea-catering-be/internal/pkg/helper"
 	"github.com/google/uuid"
 )
 
@@ -19,6 +20,9 @@ type SubscriptionUsecaseItf interface {
 	GetUserSubscriptions(userID uuid.UUID) ([]dto.SubscriptionResponse, *res.Err)
 	PauseSubscription(userID uuid.UUID, subscriptionID uuid.UUID, req dto.PauseSubscriptionRequest) (*dto.SubscriptionResponse, *res.Err)
 	CancelSubscription(userID uuid.UUID, subscriptionID uuid.UUID) (*dto.SubscriptionResponse, *res.Err)
+	GetNewSusbcriptionsCount(req dto.GetSubscriptionStatisticRequest) (int64, *res.Err)
+	GetMRR(req dto.GetSubscriptionStatisticRequest) (float64, *res.Err)
+	GetTotalActiveSubscriptions() (int64, *res.Err)
 	HandlePaymentNotification(notification map[string]interface{}) *res.Err
 	UpdateExpiredSubscriptions() *res.Err
 }
@@ -27,13 +31,15 @@ type SubscriptionUsecase struct {
 	SubscriptionRepository subscriptionRepository.SubscriptionRepositoryItf
 	MealPlanRepository     mealPlanRepository.MealPlanRepositoryItf
 	midtrans               midtrans.MidtransItf
+	helper                 helper.HelperItf
 }
 
-func NewSubscriptionUsecase(subscriptionRepository subscriptionRepository.SubscriptionRepositoryItf, mealPlanRepository mealPlanRepository.MealPlanRepositoryItf, midtrans midtrans.MidtransItf) SubscriptionUsecaseItf {
+func NewSubscriptionUsecase(subscriptionRepository subscriptionRepository.SubscriptionRepositoryItf, mealPlanRepository mealPlanRepository.MealPlanRepositoryItf, midtrans midtrans.MidtransItf, helper helper.HelperItf) SubscriptionUsecaseItf {
 	return &SubscriptionUsecase{
 		SubscriptionRepository: subscriptionRepository,
 		MealPlanRepository:     mealPlanRepository,
 		midtrans:               midtrans,
+		helper:                 helper,
 	}
 }
 
@@ -231,6 +237,43 @@ func (uc *SubscriptionUsecase) CancelSubscription(userID uuid.UUID, subscription
 		StartDate:    sub.StartDate,
 		EndDate:      sub.EndDate,
 	}, nil
+}
+
+func (uc *SubscriptionUsecase) GetNewSusbcriptionsCount(req dto.GetSubscriptionStatisticRequest) (int64, *res.Err) {
+	start, end, err := uc.helper.ParseDateRange(req.StartDate, req.EndDate)
+	if err != nil {
+		return 0, err
+	}
+
+	count, repoErr := uc.SubscriptionRepository.CountNewInRange(start, end)
+	if repoErr != nil {
+		return 0, res.ErrInternalServerError(res.FailedGetNewSubscriptionsCount)
+	}
+
+	return count, nil
+}
+
+func (uc *SubscriptionUsecase) GetMRR(req dto.GetSubscriptionStatisticRequest) (float64, *res.Err) {
+	start, end, err := uc.helper.ParseDateRange(req.StartDate, req.EndDate)
+	if err != nil {
+		return 0, err
+	}
+
+	mrr, repoErr := uc.SubscriptionRepository.CalculateMRRInRange(start, end)
+	if repoErr != nil {
+		return 0, res.ErrInternalServerError(res.FailedCalculateMMR)
+	}
+
+	return mrr, nil
+}
+
+func (uc *SubscriptionUsecase) GetTotalActiveSubscriptions() (int64, *res.Err) {
+	count, err := uc.SubscriptionRepository.CountTotalActive()
+	if err != nil {
+		return 0, res.ErrInternalServerError(res.FailedGetTotalActiveSubscriptions)
+	}
+
+	return count, nil
 }
 
 func (uc *SubscriptionUsecase) HandlePaymentNotification(notification map[string]interface{}) *res.Err {

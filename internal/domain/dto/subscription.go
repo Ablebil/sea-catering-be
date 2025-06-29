@@ -20,6 +20,11 @@ type PauseSubscriptionRequest struct {
 	EndDate   time.Time `json:"end_date" validate:"required" example:"2025-01-30"`
 }
 
+type GetSubscriptionStatisticRequest struct {
+	StartDate string `query:"start_date" validate:"required,datetime=2006-01-02" example:"2025-01-15"`
+	EndDate   string `query:"end_date" validate:"required,datetime=2006-01-02" example:"2025-01-30"`
+}
+
 type MidtransRequest struct {
 	OrderID         string
 	Amount          int64

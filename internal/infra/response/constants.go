@@ -60,20 +60,26 @@ const (
 const (
 	SubscriptionNotFound = "Subscription not found"
 
-	FailedSaveSubscription         = "Failed to save subscription"
-	FailedCreatePaymentTransaction = "Failed to create payment transaction"
-	FailedGetAllSubscriptions      = "Failed to get all subscriptions"
-	FailedGetSubscriptionByID      = "Failed to get subscription by ID"
-	FailedUpdateSubscription       = "Failed to update subscription"
-	FailedPauseSubscription        = "Failed to pause subscription"
-	FailedCancelSubscription       = "Failed to cancel subscription"
-	FailedGetExpiredSubscriptions  = "Failed to get expired subscriptions"
+	FailedSaveSubscription            = "Failed to save subscription"
+	FailedCreatePaymentTransaction    = "Failed to create payment transaction"
+	FailedGetAllSubscriptions         = "Failed to get all subscriptions"
+	FailedGetSubscriptionByID         = "Failed to get subscription by ID"
+	FailedUpdateSubscription          = "Failed to update subscription"
+	FailedPauseSubscription           = "Failed to pause subscription"
+	FailedCancelSubscription          = "Failed to cancel subscription"
+	FailedGetExpiredSubscriptions     = "Failed to get expired subscriptions"
+	FailedGetNewSubscriptionsCount    = "Failed to get new subscriptions count"
+	FailedCalculateMMR                = "Failed to calculate MMR"
+	FailedGetTotalActiveSubscriptions = "Failed to get total active subscriptions"
 
-	CreateSubscriptionSuccess  = "Subscription created successful"
-	GetAllSubscriptionsSuccess = "Get all subscriptions successful"
-	PauseSubscriptionSuccess   = "Subscription paused successful"
-	CancelSubscriptionSuccess  = "Subscription cancelled successful"
-	WebhookProcessedSuccess    = "Webhook processed successful"
+	CreateSubscriptionSuccess          = "Subscription created successful"
+	GetAllSubscriptionsSuccess         = "Get all subscriptions successful"
+	PauseSubscriptionSuccess           = "Subscription paused successful"
+	CancelSubscriptionSuccess          = "Subscription cancelled successful"
+	GetNewSubscriptionsStatsSuccess    = "Get new subscriptions stats success"
+	GetMRRStatsSuccess                 = "Get MRR stats success"
+	GetTotalActiveSubscriptionsSuccess = "Get total active subscriptions success"
+	WebhookProcessedSuccess            = "Webhook processed successful"
 )
 
 // Others
@@ -102,6 +108,7 @@ const (
 // Handler
 const (
 	FailedParsingRequestBody    = "Failed parsing request body"
+	FailedParsingRequestParams  = "Failed parsing request params"
 	FailedValidateRequest       = "Failed to validate request"
 	MissingAccessToken          = "Missing access token"
 	InvalidAccessToken          = "Invalid access token"

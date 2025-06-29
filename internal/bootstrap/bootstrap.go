@@ -99,7 +99,7 @@ func Start() error {
 
 	// Subscription Domain
 	subscriptionRepository := SubscriptionRepository.NewSubscriptionRepository(db)
-	subscriptionUsecase := SubscriptionUsecase.NewSubscriptionUsecase(subscriptionRepository, mealPlanRepository, midtrans)
+	subscriptionUsecase := SubscriptionUsecase.NewSubscriptionUsecase(subscriptionRepository, mealPlanRepository, midtrans, helper)
 	SubscriptionHandler.NewSubscriptionHandler(v1, validator, subscriptionUsecase, middleware)
 
 	scheduler := scheduler.NewScheduler(subscriptionUsecase, userUsecase)

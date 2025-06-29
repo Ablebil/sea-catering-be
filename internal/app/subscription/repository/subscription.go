@@ -17,6 +17,9 @@ type SubscriptionRepositoryItf interface {
 	GetSubscriptionByIDAndUserID(id, userID uuid.UUID) (*entity.Subscription, error)
 	GetSubscriptionByOrderID(orderID string) (*entity.Subscription, error)
 	GetExpiredActiveSubscriptions() ([]entity.Subscription, error)
+	CountNewInRange(start, end time.Time) (int64, error)
+	CalculateMRRInRange(start, end time.Time) (float64, error)
+	CountTotalActive() (int64, error)
 }
 
 type SubscriptionRepository struct {
@@ -94,4 +97,29 @@ func (r *SubscriptionRepository) GetExpiredActiveSubscriptions() ([]entity.Subsc
 
 	err := r.db.Where("status = ? AND end_date < ?", entity.StatusActive, now).Find(&subscriptions).Error
 	return subscriptions, err
+}
+
+func (r *SubscriptionRepository) CountNewInRange(start, end time.Time) (int64, error) {
+	var count int64
+	err := r.db.Model(&entity.Subscription{}).
+		Where("created_at BETWEEN ? AND ?", start, end).
+		Count(&count).Error
+	return count, err
+}
+
+func (r *SubscriptionRepository) CalculateMRRInRange(start, end time.Time) (float64, error) {
+	var total float64
+	err := r.db.Model(&entity.Subscription{}).
+		Where("status = ? AND created_at BETWEEN ? AND ?", entity.StatusActive, start, end).
+		Select("COALESCE(SUM(total_price), 0)").
+		Row().Scan(&total)
+	return total, err
+}
+
+func (r *SubscriptionRepository) CountTotalActive() (int64, error) {
+	var count int64
+	err := r.db.Model(&entity.Subscription{}).
+		Where("status = ?", entity.StatusActive).
+		Count(&count).Error
+	return count, err
 }

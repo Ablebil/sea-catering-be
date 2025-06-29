@@ -8,7 +8,7 @@ import (
 	res "github.com/Ablebil/sea-catering-be/internal/infra/response"
 )
 
-func ValidateImageFile(file multipart.File, header *multipart.FileHeader, maxSize int64) *res.Err {
+func (h *Helper) ValidateImageFile(file multipart.File, header *multipart.FileHeader, maxSize int64) *res.Err {
 	if header.Size > maxSize {
 		return res.ErrEntityTooLarge(res.FileSizeExceedsLimit)
 	}

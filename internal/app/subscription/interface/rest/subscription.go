@@ -26,6 +26,12 @@ func NewSubscriptionHandler(routerGroup fiber.Router, validator *validator.Valid
 	routerGroup.Get("/", middleware.Authentication, subscriptionHandler.GetUserSubscriptions)
 	routerGroup.Put("/:id/pause", middleware.Authentication, subscriptionHandler.PauseSubscription)
 	routerGroup.Delete("/:id", middleware.Authentication, subscriptionHandler.CancelSubscription)
+
+	adminRouterGroup := routerGroup.Group("/admin", middleware.Authentication, middleware.Authorization)
+	adminRouterGroup.Get("/stats/new", subscriptionHandler.GetNewSubscriptionsStats)
+	adminRouterGroup.Get("/stats/mrr", subscriptionHandler.GetMRRStats)
+	adminRouterGroup.Get("/stats/active-total", subscriptionHandler.GetTotalActiveSubscriptions)
+
 	routerGroup.Post("/webhook/midtrans", subscriptionHandler.HandleMidtransWebhook)
 }
 
@@ -160,6 +166,61 @@ func (h SubscriptionHandler) CancelSubscription(ctx *fiber.Ctx) error {
 	}
 
 	return res.OK(ctx, cancelledSub, res.CancelSubscriptionSuccess)
+}
+
+func (h SubscriptionHandler) GetNewSubscriptionsStats(ctx *fiber.Ctx) error {
+	req := new(dto.GetSubscriptionStatisticRequest)
+	if err := ctx.QueryParser(req); err != nil {
+		return res.ErrBadRequest(res.FailedParsingRequestParams)
+	}
+
+	if err := h.Validator.Struct(req); err != nil {
+		validationErrors, ok := err.(validator.ValidationErrors)
+		if !ok {
+			return res.ErrInternalServerError(res.FailedValidateRequest)
+		}
+
+		return res.ErrValidation(validationErrors)
+	}
+
+	count, err := h.SubscriptionUsecase.GetNewSusbcriptionsCount(*req)
+	if err != nil {
+		return err
+	}
+
+	return res.OK(ctx, fiber.Map{"count": count}, res.GetNewSubscriptionsStatsSuccess)
+}
+
+func (h SubscriptionHandler) GetMRRStats(ctx *fiber.Ctx) error {
+	req := new(dto.GetSubscriptionStatisticRequest)
+	if err := ctx.QueryParser(req); err != nil {
+		return res.ErrBadRequest(res.FailedParsingRequestParams)
+	}
+
+	if err := h.Validator.Struct(req); err != nil {
+		validationErrors, ok := err.(validator.ValidationErrors)
+		if !ok {
+			return res.ErrInternalServerError(res.FailedValidateRequest)
+		}
+
+		return res.ErrValidation(validationErrors)
+	}
+
+	mrr, err := h.SubscriptionUsecase.GetMRR(*req)
+	if err != nil {
+		return err
+	}
+
+	return res.OK(ctx, fiber.Map{"mrr": mrr}, res.GetMRRStatsSuccess)
+}
+
+func (h SubscriptionHandler) GetTotalActiveSubscriptions(ctx *fiber.Ctx) error {
+	count, err := h.SubscriptionUsecase.GetTotalActiveSubscriptions()
+	if err != nil {
+		return err
+	}
+
+	return res.OK(ctx, fiber.Map{"count": count}, res.GetTotalActiveSubscriptionsSuccess)
 }
 
 // @Summary      Handle Midtrans Webhook
