@@ -12,7 +12,7 @@ type SubscriptionStatusLog struct {
 	SubscriptionID uuid.UUID          `gorm:"column:subscription_id;type:char(36);not null"`
 	Subscription   *Subscription      `gorm:"foreignKey:subscription_id;constraint:OnDelete:CASCADE"`
 	OldStatus      SubscriptionStatus `gorm:"column:old_status;type:varchar(20)"`
-	NewStatus      SubscriptionStatus `gorm:"column:old_status;type:varchar(20);not null"`
+	NewStatus      SubscriptionStatus `gorm:"column:new_status;type:varchar(20);not null"`
 	ChangedAt      *time.Time         `gorm:"column:changed_at;type:timestamp;autoCreateTime"`
 }
 
