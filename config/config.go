@@ -20,6 +20,8 @@ type Config struct {
 	DBUser     string `env:"DB_USER"`
 	DBPassword string `env:"DB_PASSWORD"`
 
+	FEURL string `env:"FE_URL"`
+
 	AccessSecret  string `env:"ACCESS_SECRET"`
 	RefreshSecret string `env:"REFRESH_SECRET"`
 

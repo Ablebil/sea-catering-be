@@ -44,7 +44,7 @@ func New(conf *conf.Config) *fiber.App {
 	app.Use(healthcheck.New())
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173",
+		AllowOrigins: conf.FEURL,
 		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
 		AllowHeaders: "Content-Type, Authorization",
 	}))
