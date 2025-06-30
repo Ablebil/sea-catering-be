@@ -20,11 +20,7 @@ type Midtrans struct {
 
 func NewMidtrans(conf *conf.Config) MidtransItf {
 	var snapClient snap.Client
-	if conf.AppEnv == "production" {
-		snapClient.New(conf.MidtransServerKey, midtrans.Production)
-	} else {
-		snapClient.New(conf.MidtransServerKey, midtrans.Sandbox)
-	}
+	snapClient.New(conf.MidtransServerKey, midtrans.Sandbox)
 
 	return &Midtrans{
 		snapClient: &snapClient,
