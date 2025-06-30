@@ -1,8 +1,6 @@
-swag:
-	@swag init -g cmd/api/main.go --parseDependency --parseInternal
-run: swag
+run:
 	@docker compose up
-build: swag
+build:
 	@docker compose down
 	@docker compose up --build
 stop:
