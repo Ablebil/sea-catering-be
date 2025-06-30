@@ -117,23 +117,30 @@ func seedMealPlans(db *gorm.DB) error {
 		{
 			ID:          parseUUID("d1e70001-c1b0-4a8e-9a7c-141742660001"),
 			Name:        "Diet Plan",
-			Description: "A healthy meal plan for your diet.",
+			Description: "Manage your weight without sacrificing flavor. Our Diet Plan is carefully crafted with calorie-controlled, nutritionally balanced meals to help you achieve your health goals while enjoying delicious food every day.",
 			Price:       30000,
 			PhotoURL:    "https://mifsarvarixwyfrfiiwa.supabase.co/storage/v1/object/public/media/meal-plans/diet-plan.jpg",
 		},
 		{
 			ID:          parseUUID("d1e70002-c1b0-4a8e-9a7c-141742660002"),
 			Name:        "Protein Plan",
-			Description: "High protein meal plan for muscle gain.",
+			Description: "Fuel your fitness journey and maximize muscle growth. This power-packed plan is loaded with high-quality lean protein and complex carbs to support your workouts, accelerate recovery, and build strength.",
 			Price:       40000,
 			PhotoURL:    "https://mifsarvarixwyfrfiiwa.supabase.co/storage/v1/object/public/media/meal-plans/protein-plan.jpg",
 		},
 		{
 			ID:          parseUUID("d1e70003-c1b0-4a8e-9a7c-141742660003"),
 			Name:        "Royal Plan",
-			Description: "A luxury meal plan featuring premium ingredients.",
+			Description: "Indulge in an epicurean experience with our Royal Plan. Featuring the finest, premium ingredients and gourmet recipes, this luxurious meal plan is crafted for those who desire exquisite flavors and unparalleled quality.",
 			Price:       60000,
 			PhotoURL:    "https://mifsarvarixwyfrfiiwa.supabase.co/storage/v1/object/public/media/meal-plans/royal-plan.jpg",
+		},
+		{
+			ID:          parseUUID("d1e70004-c1b0-4a8e-9a7c-141742660004"),
+			Name:        "Vegan Plan",
+			Description: "Discover the vibrant world of innovative plant-based cuisine. Our Vegan Plan features a creative menu of globally-inspired, wholesome, and delicious meals that are packed with flavor.",
+			Price:       30000,
+			PhotoURL:    "https://mifsarvarixwyfrfiiwa.supabase.co/storage/v1/object/public/media/meal-plans/vegan-plan.jpg",
 		},
 	}
 
