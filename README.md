@@ -263,7 +263,7 @@ http://localhost:8080/swagger/
 
 - `GET /api/v1/meal-plans/` - Get all meal plans
 - `GET /api/v1/meal-plans/:id` - Get meal plan by ID
-- `POST /api/v1/meal-plans/` - Create a new meal plan (Admin)
+- `POST /api/v1/meal-plans/` - Create a new meal plan (Note: This endpoint is for demonstrating cache invalidation. In the future, if creation is needed, access will be restricted to admins only.)
 
 ### Subscriptions
 
